@@ -1,0 +1,234 @@
+---
+header-includes:
+- \usepackage{subcaption}
+- \usepackage{pdflscape}
+- \usepackage{fancyhdr}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \setlength{\parskip}{4ex}
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+require(readxl)
+require(knitr)
+require(pander)
+options(scipen=999)
+knitr::opts_chunk$set(echo = FALSE)
+#this puts commas in the numbers globally
+knitr::knit_hooks$set(inline = function(x) {
+prettyNum(x, big.mark=",")})
+```
+
+```{r}
+#popdat contains the Teshekpuk Lake data from 2011-2016 as modified from existing excel sheets
+survdat <- read.csv("TLS20112016.csv", header = TRUE)
+
+
+#this chunk formats day and month into a string e.g., 15-17 Sept, etc. from day, month, year columns in the data file
+year.dates=data.frame(year=sort(unique(dat$year)), dates=rep("hold", length(unique(dat$year))))
+year.dates$dates=as.character(year.dates$dates)
+for (i in 1:length(unique(dat$year))) {
+  for (j in 1:length(sort(unique(dat$mo[dat$year==unique(dat$year)[i]])))) {
+  
+    temp=sort(unique(dat$sdate[dat$year==unique(dat$year)[i] & dat$mo==sort(unique(dat$mo[dat$year==unique(dat$year)[i]]))[j]]))
+  
+    for (k in 1:length(temp)){
+      
+      if(k != length(temp)){
+        
+        if(k == 1){temp2 = substring(temp[1],1,2)
+        temp2=paste(temp2,",", sep="")
+        }
+        
+        if(k != 1){temp2 = paste(temp2, substring(temp[k],1,2), ", " , sep="")}
+      }
+        
+      if(k == length(temp) & k != 1){temp2 = paste(temp2, temp[k], sep="")}  
+      if(k == length(temp) & k == 1){temp2=temp[1]}
+        
+      }
+      
+    if(j==1){temp3=temp2}
+    if(j == length(sort(unique(dat$mo[dat$year==unique(dat$year)[i]]))) & j==1){year.dates$dates[i]=temp2}
+    if(j==2){year.dates$dates[i]=paste(temp3, "; ", temp2, sep="")}
+    rm(temp2)
+    
+  }
+}
+```
+
+\pagestyle{fancy}
+\fancyfoot[R]{\scriptsize USFWS, MBM-Teshekpuk Lake Molting Goose Survey, 2016}
+\renewcommand{\footrulewidth}{1pt}
+\renewcommand{\headrulewidth}{0pt}
+
+**\LARGE{Abundance and Distribution of Molting Geese in the Teshekpuk Lake Area, July 2016}** \hfill
+
+\large
+\textbf{Brad S. Shults}, U.S. Fish and Wildlife Service, Migratory Bird Management, 1011 E. Tudor Rd., Anchorage, AK 99503\newline\newline
+\textbf{Tamara K. Zeller}, U.S. Fish and Wildlife Service, Migratory Bird Management, 1011 E. Tudor Rd., Anchorage, AK 99503
+
+
+**\large{ABSTRACT:}**
+This report summarizes the 35th annual, aerial survey of molting geese conducted near Teshekpuk Lake on the Arctic Coastal Plain of Alaska (ACP).  The survey was conducted between `r "NA"` and `r "NA"`. Total geese observed in the Teshekpuk Lake Traditional Survey Area, Cape Simpson, Colville River Delta, and Piasuk River Delta were `r "NA"` (`r "NA"` adults and `r "NA"` goslings). Species composition of adult geese counted across the survey area was: Pacific black brant (`r "NA"`%), Taverner's cackling goose (`r "NA"`%), Greater white-fronted goose (`r "NA"`%), and Lesser snow goose (`r "NA"`%). Within the Teshekpuk Lake Traditional Survey Area, we recorded `r "NA"` observations totaling `r "NA"` geese (`r "NA"` adults and `r "NA"` goslings).  Total counts of adults (and goslings) in the Traditional Survey Area by species were: Pacific black brant `r "NA"` (`r "NA"`), Taverner's cackling goose `r "NA"` (`r "NA"`), Greater white-fronted goose `r "NA"` (`r "NA"`), and lesser snow goose `r "NA"` (`r "NA"`). Incidental observations of tundra swans totaled `r "NA"` adults and `r "NA"` cygnets for all areas.  Pacific loon, red-throated loon, and yellow-billed loon totals for the Traditional Survey Area were `r "NA"`, `r "NA"`, and `r "NA"`, respectively.
+
+\textbf{KEY WORDS: }aerial survey, Alaska, black brant \textit{(Branta bernicla nigricans)}, Taverner's cackling goose \textit{(Branta hutchinsii taverneri)}, greater white-fronted goose \textit{(Anser albifrons frontalis)}, lesser snow goose \textit{(Chen caerulescens)}, molting geese, National Petroleum Reserve, Teshekpuk Lake
+
+\hfill\textit {March 2017}
+
+\textbf{INTRODUCTION}\break
+The primary goal of the molting goose survey is to monitor the abundance and distribution of 4 species of geese [i.e., Pacific black brant \textit{(Branta bernicla nigricans)}, Taverner's cackling goose \textit{(Branta hutchinsii taverneri)}, greater white-fronted goose \textit{(Anser albifrons frontalis)}, and lesser snow goose \textit{(Chen caerulescens)} during their flightless wing molt in the area north and east of Teshekpuk Lake. Specific objectives include measuring: 1) annual minimum counts and locations of adult geese and goslings, 2) relative species composition, 3) annual production, and 4) opportunistic counts and locations of loons, swans, and other waterbirds. Initial surveys in the Teshekpuk Lake area were conducted by the USFWS from 1976-78. Following the initial surveys and a 3-year hiatus (i.e., 1979-1981), the survey has been conducted annually since 1982. This long-term survey area is referred to as the Traditional Survey Area (Fig. 1). The significance of the Traditional Survey Area to molting geese was first documented by Henry (Hank) Hansen and Jim King in 1957 (King 1970), and the importance of the area as goose molting habitat was reaffirmed by the Secretary of Interior in 1977 with the establishment of the Teshekpuk Lake Special Area (TLSA) within the larger National Petroleum Reserve-Alaska (Fig. 1). The Traditional Survey Area also encompasses the area designated by BLM as a biologically sensitive Goose Molting Area within the larger TLSA (U.S. BLM 2008; Fig. 1)
+
+A secondary goal of the survey is to detect regional shifts in habitat use by periodically monitoring numbers of molting geese in 4 additional areas between Cape Simpson and the Colville River Delta (Fig. 1). In 2010, 5 additional locations were identified as important molting areas as a result of studies conducted by the USGS Alaska Science Center (Flint et al. 2008, Lewis et al. 2009). Based on this research and in an effort to specifically monitor brant abundance and use of areas outside of the Traditional Survey Area, these new areas were first surveyed in 2010 (Mallek 2011).  Since 2010, Cape Simpson and the Piasuk River Delta, (i.e., the areas with the highest abundance of molting brant) have been surveyed annually. Atigaru and Colville River Delta will be monitored every 5 years.  North Kogru River occurs within the Traditional Survey Area but prior year goose counts from that area were lumped into other lake reference numbers.  Henceforth, counts from the North Kogru River portion of the Traditional Survey Area will be specifically referenced as units 204 and 205. 
+The documented importance of the Teshekpuk Lake area to molting geese has been one of the primary justifications for protecting the TLSA from oil and gas leasing (U.S. BLM 2008, 2013).  From 1998 to 2008, no leasing was considered in the TLSA, in part, because of the sensitivity to disturbance of molting geese using the area.  In 2008, a new Record of Decision by BLM stated the area was intended for leasing, but only after a 10-yr delay (U.S. BLM 2008).  Under that scenario, lease sales would have been allowed starting in 2018.  However, in 2013, a new Record of Decision returned the status to no leasing, with a concurrent moratorium on construction of non-safety related infrastructure (U.S. BLM 2013). Accordingly, the 2013 Record of Decision by the BLM also changed the status of the Cape Simpson and Piasuk River Delta areas to no leasing, although infrastructure will be allowed (U.S. BLM 2013).  
+
+```{r}
+#This is figure 1
+```
+\begin{figure}[h]
+\includegraphics{tlsa_mgarea_1200dpi.jpg}
+\caption{Molting goose survey areas and BLM land status designations near Teshekpuk Lake, Alaska.}
+\end{figure}
+
+\textbf{STUDY AREA}\hfill\break
+\textbf{Traditional Survey Area}\hfill\break
+The Traditional Survey Area encompasses approximately 2,000 km$^{2}$ and includes approximately 209 lakes, bays, and shoreline/creek segments north of Teshekpuk Lake (Fig. 1). Each lake or water body is identified by a unique number, and observations are recorded separately for each survey unit (Fig 2). With the addition of lakes and shoreline/creek segments, the total number of survey units increased from 197 to 209 in 2005. Prior to 2005, additional lakes, creeks, and shorelines were surveyed, but these data were reported with geographic descriptions of the areas surveyed and did not correspond to uniquely numbered survey units. In addition, since 2005, shoreline segments were completed sporadically (e.g., 202, 203, 204, and 205). 
+
+\textbf{Additional Survey Areas}\hfill\break
+In 2010, survey areas were delineated for geographic areas at Atigaru Point, Cape Simpson, the Colville River Delta, North Kogru River, and the Piasuk River Delta (Fig. 1).  The Atigaru Point survey area encompasses approximately 98 km$^{2}$ and includes the lakes and shoreline near the point and the offshore Eskimo Islands. The Cape Simpson survey area was delineated into approximately 16 lake, wetland, estuary, and beach survey units spread over 158 km$^{2}$.  The Colville River Delta survey area covers lakes, river channels, and estuaries across 188 km$^{2}$ of the northwest portion of the river delta. The Piasuk River Delta survey area includes 6 discrete lakes and river estuaries covering approximately 98 km$^{2}$.   The North Kogru River area was approximately 78 km$^{2}$ and overlaid portions of survey units 204 and 205.  As stated in the introduction, the North Kogru River area is not an additional survey, per se, as it occurs within the Traditional Survey Area; however counts within the area are now formally referenced as discrete segments (204 and 205) rather than lumped into other reference lakes.
+
+```{r}
+#this is figure 2
+```
+\begin{figure}[h]
+\includegraphics{Tesh_traditionalarea.jpg}
+\caption{Molting goose survey units within the Traditional Survey Area.}
+\end{figure}
+
+\textbf{METHODS}\break
+The survey was flown in an amphibious-equipped Cessna 206 (N77554).  Optimum survey altitude and airspeed is 60-90 meters (200-300 feet) above ground level and 80-100 knots (90-115 mph), respectively. Observations were collected by both the pilot and front right seat observer. Geese in small groups were individually counted whereas larger flock sizes were estimated. The goal was to obtain complete coverage within the survey area but lake size and wind conditions determined optimum flight paths to achieve this goal. For smaller lakes, we navigated a flight path near or over the lake that provided a complete view of the lake and shoreline. Flight paths for larger lakes included a complete shoreline route followed by transects to cover the surface area of the lake.  Flight lines for shoreline and creek segments were flown to give the observer the best view of the entire segment. 
+We used program RECORD (Hodges 2001, USFWS unpublished report) operating on tablet computers (i.e., Panasonic Toughpad FZ-M1) to record observations. Observations were voice recorded by each observer using a handheld microphone and stored as audio files (i.e., as WAV audio files). The aircraft flight path was recorded by a dedicated GPS in each tablet computer. Observations of adult and hatching year geese, swans, and loons were recorded for each unit.  Survey units were located using images displayed on a Garmin GPSmap 396 GPS and a paper map with a satellite image of the area and the numbered survey units.
+A second computer program, TRANSCRIBE (Hodges 2001, USFWS unpublished report) was used to replay audio files and convert the recorded data to text files via keyboard characters coded by species and age class.  TRANSCRIBE assigns geographic coordinates to each observation when the data are transcribed. TRANSCRIBE output is a comma delimited text file containing geotagged observations for each day. Text files are uploaded to spreadsheets for summary analysis and spatial data (e.g., flight lines) are uploaded to a geodatabase.
+
+\setlength{\parskip}{4ex}
+\textbf{RESULTS}\break
+Survey flights were conducted on 17, 18, 22, and 24-26 July with pilot-observer B. Shults and observer C. Dau (Fig. 3). Average altitude and airspeeds were 86 knots (99 mph) and 67 m (221 ft), respectively. Summary observation totals for geese and goslings in the Traditional Survey Area, Cape Simpson, Colville River Delta, and Piasuk River Delta are provided in Table 1.  Figure 4 illustrates the number of adult geese by species counted from 1982-2015 in the Traditional Survey Area. Observation totals for geese, loons, and swans within each survey unit in the Traditional Survey Area are provided in Appendix 1.
+
+\textbf{Traditional Survey Area}
+Survey flights were conducted on 5 days between 18 and 26 July. Total survey time was 11 hrs and 10 mins. We recorded 2,282 observations totaling 78,044 geese (67,204 adults and 10,840 goslings). The pilot and observer recorded 37% and 63% of total observations, respectively. Relative abundance of adult geese counted within each survey unit varied across the survey area (Fig. 5). Pacific black brant accounted for 19% of the geese observed (12,814 adults and 388 goslings), and greater white-fronted geese accounted for 61% of the geese observed (40,904 adults and 8,126 goslings).  Taverner's cackling goose totals were 6,891 adults and 308 goslings and accounted for 10% of the geese observed.  Lesser snow geese accounted for 10% of the adult geese observed (6,595 adults and 2,018 goslings). Incidental observations of tundra swans totaled 335 adults and 50 cygnets.  Pacific loon, red-throated loon, and yellow-billed loon totals were 103, 11, and 0, respectively.
+
+\textbf{Additional Survey Areas}
+The Piasuk River Delta and Cape Simpson areas were surveyed on 26 July in 48 and 54 mins, respectively. We recorded 151 observations totaling 6,168 geese (4,115 adults and 2,053 goslings) at the Piasuk River, and species composition of adults was 26% Pacific black brant, and 1% Taverner's cackling geese, 15% greater white-fronted geese, and 58% lesser snow geese. Total geese observed at Cape Simpson were 12,463 (9,268 adults and 3,195 goslings) in 243 observations, and the adult composition was 13% Pacific black brant, 1% Taverner's cackling geese, 63% greater white-fronted geese, and 23% lesser snow geese. Atigaru Point was not surveyed because of coastal fog. The Kogru River area (i.e., survey units 204 and 205) was surveyed, and those data are included in the Traditional Survey Area summary. Summary data for the additional areas are provided in Table 1.
+
+\newpage
+```{r}
+#This is Table 1.
+n.rows = length(unique(dat$year))
+
+table1 <- data.frame(
+  "Year" =
+  "BLBR" =
+   
+  )
+colnames(table1) <- c("**Location**", "**Year**", "**BLBR**", "**BLBR\goslings**", "**CACG**", "**CACG\goslings**","**GWFG**", "**GWFG\goslings**","**SNGO**", "**SNGO\goslings**")
+row.names(table1) <- c("**Traditional Area**", "**Cape Simpson**", "**Piasuk River Delta**")
+```
+```{r}
+
+pander(table1, style="multiline", split.cells = c("5%","45%","25%","25%"), split.table = 80, round=3, justify="right", 
+       keep.line.breaks=TRUE, caption = "Observations of adult geese and goslings in the Teshekpuk Lake Traditional Survey Area, Cape Simpson, and the Piasuk River Delta, July 2016. BLBR=black brant, CACG=Taverner's cackling goose, GWFG=greater white-fronted goose, and SNGO=snow goose.")
+```
+
+```{r}
+#this is figure 3
+```
+\begin{figure}[h]
+\includegraphics{Flight_Lines_600dpi.jpg}
+\caption{Molting goose survey flight lines, 11-14 July 2016.}
+\end{figure}
+
+```{r}
+#This would be the line graph figure 4
+#teshads contains the Teshekpuk Lake adult only goose totals by species by year 1982-2016 (totals/1000)
+teshads<- read.csv("teshadults8216.csv", header = TRUE)
+```
+```{r fig.cap="Total adult Pacific black brant (BLBR), Taverner's cackling geese (CACG), greater white-fronted geese (GWFG), and Lesser snow geese (SNGO) counted by species, 1982-2016, Teshekpuk Lake Traditional Area."}
+plot()
+```
+```{r}
+#this is figure 5
+```
+\begin{figure}[h]
+\includegraphics{.jpg}
+\caption{Relative abundance of geese within the Traditional Survey Area, Teshekpuk Lake, July 2016.}
+\end{figure}
+
+\textbf{DISCUSSION}\break
+Although, survey flights only began 1 day later than the median start date of previous surveys (i.e., 17 July [1982-1991; 2003-2014]), the survey ended 7 days later (i.e., 26 July) than the median end date (i.e., 19 July) for previous surveys. All goose species were observed flying during the survey period with snow geese being the least likely to take flight.  Movements of geese from one survey unit to another during the survey period may have biased total counts. Given the documented advance in overall phenology and earlier arrival dates of goose species on the Arctic Coastal Plain (Ward et al. 2015), subsequent molting surveys should begin earlier to reduce bias as a result of post-molt movement. In addition, the survey crew in 2014 and 2015 included an inexperienced waterfowl observer that may have biased counts.
+
+\texbf{Teshekpuk Lake Traditional Survey Area}
+Counts of adult Pacific black brant and greater white-fronted geese were higher in 2015 than 2014 whereas counts for Taverner's cackling geese and lesser snow geese were 37% and 14% lower, respectively. Counts of all adult geese except greater white-fronted geese were lower than the previous 5 year mean (Table 1). 
+
+\textit{\underline{Pacific Black Brant}
+Adult brant numbers were similar to 2014, but 31% lower than the 5 year mean. The 2014 and 2015 totals were the two lowest counts in the last 15 years. The number of goslings counted was 15% higher than 2014. Lower numbers of brant in both years may be attributable to earlier nesting phenology, the later survey period and the departure of brant prior to or during the survey, and/or higher nest success in other areas that reduced the number of molt migrants in the Teshekpuk area (Wilson 2015).
+
+\texit{\underline{Taverner's Cackling Geese}}
+Compared to 2014, the number of CACG adults declined by 37% with a corresponding decline of 51% for goslings observed. Total number of adults observed declined for the third year in a row, and the number of adults observed was 53% below the previous 5 year mean (Table 1). Long-term survey data indicate that use of the survey area by molting CACG is highly variable (Fig. 3). 
+
+\texit{\underline{Greater White-fronted Geese }
+Based on banding data, (Bird Banding Lab, unpublished data), molting white-fronted geese observed across the survey area are believed to nest on the ACP. Although the estimated population of white-fronted geese during the nesting season on the ACP has grown over the last decade (i.e., 1.04/year), the abundance of molting geese in the Teshekpuk Lake survey area has had substantially more growth (i.e.,  1.12/year; USFWS, unpublished data). However, after 7 years (i.e., 2007-2014) of increasing numbers, gosling numbers decreased by 46% compared to 
+2014 (Fig. 6).
+\textit{\underline{Lesser Snow Geese}
+Although the number of adult snow geese declined by 14% compared to 2014, the number of goslings observed increased 88% (Fig. 7). This productivity trend is consistent with the ACP breeding pair survey results and current USGS research that indicate that the snow goose population on the ACP could double every 3-4 years (Stehn et al. 2013, Hupp et al. 2015).
+
+\textbf{Additional Survey Areas}
+
+\textit{\underline{Pacific Black Brant}
+The Piasuk River and Cape Simpson areas have been surveyed annually since 2010 with the primary objective to document brant abundance and distribution. Research indicates that young brant may be dispersing from the Traditional Area to utilize new molting habitats (Flint et al. 2014). Brant numbers in both areas were highest in 2013, but have declined annually since then. In contrast to a 17% decline between 2013 and 2014 in the Cape Simpson survey area, brant counted in 2015 declined by 82%.  Survey effort at Cape Simpson was certainly lower in 2015 and may have contributed to the lower number of brant counted. However, survey effort within the Piasuk River area was comparable to 2014 and brant numbers there also declined by 71% when compared to 2014. Brant counted in the Traditional Area were also significantly lower in 2014 and 2015 than previous years. The Colville River Delta has only been surveyed two years (i.e., 2010 and 2015) and adult numbers were similar both years, but goslings seen in 2015 were 83% higher than in 2010 (150 vs. 82, respectively).
+
+\textit{\underline{Other Geese}
+Adult numbers for greater white-fronted geese and lesser snow geese were above the previous 5 year means in all areas except for SNGO in the Piasuk River area. GWFG adult numbers increased at Cape Simpson and the Colville River, but decreased slightly on the Piasuk River. 
+SNGO gosling numbers were exceptionally higher in all 3 areas whereas GWFG goslings decreased in the Cape Simpson and Piasuk River areas, but were higher on the Colville River. For all areas, GWFG and SNGO gosling numbers are above the previous 5 year means. Use of the additional survey areas by Cackling geese is insignificant (i.e., <200 adults observed for all areas combined) when compared to the Traditional Survey Area and no trend in annual abundance is evident for adults or goslings.
+
+
+\textbf{ACKNOWLEDGEMENTS}\break
+We recognize Hank Hanson and Jim King (both USFWS-retired) for first documenting the importance of the Teshekpuk Lake area to waterfowl and Rod King (USFWS-MBM Fairbanks retired; 1982-1999) and Ed Mallek (USFWS-MBM Fairbanks; 2000-2013) and their observers for collecting the majority of historical data. We also thank the Kanuti NWR and National Park Service staff for providing housing, office, and aircraft support in Bettles.
+\textit{\footnotesize{Data and conclusions presented in this report are preliminary and are not for publication or citation in published manuscripts without the permission from the authors.  The findings and conclusions in this report are those of the authors and do not necessarily represent the views of the U.S. Fish and Wildlife Service.}}
+
+\textbf{CONCLUSIONS}
+Long-term survey data show that the TLSA is important molting habitat not only for brant, but also for Taverner's cackling, Greater white-fronted, and Lesser snow geese.  These survey data are crucial for identification of critical molting habitats used by geese, and to evaluate changes in abundance and distribution as a result of habitat changes that may be caused by climate change. In addition, annual monitoring of the Traditional, Cape Simpson, and Piasuk River survey areas should be continued to document if recent declines in brant numbers represent a longer-term trend. The Atigaru Point area should be surveyed in 2016. The Colville area should be surveyed again in 2020. The Kogru River area will be permanently included as part of the Traditional Survey Area.
+
+\textbf{REFERENCES}
+
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{1ex}
+
+Flint, P.L., E.J. Mallek, R.J. King, A. Schmutz, K.S. Bollinger, and D.V. Derksen. 2008. Changes in abundance and spatial distribution of geese molting near Teshekpuk Lake, Alaska: interspecific competition or ecological change? Polar Biology 31:549-556.
+
+Flint, P. L., B. W. Meixell, and E. J. Mallek. 2014. High fidelity does not preclude colonization: Range expansion of molting Black Brant on the Arctic coast of Alaska. Journal of Field Ornithology 85(1):75-83. doi: 10.1111/jofo.12051
+
+Hodges, J. 2001. Voice/GPS Survey Program Manual. USFWS, Unpublished.
+
+Hupp, J. W., D. H. Ward, M. E. Whalen, and J. M. Pearce.2015. What is causing the rapid increase of snow geese in northern Alaska ?. U.S. Geological Survey Fact Sheet 2015-3062, 2p., http://pubs.usgs.gov/fs/2015/3062/pdf/fs20153062.pdf
+
+King J.G. 1970. The swans and geese of Alaska's arctic slope. Wildfowl 21:11-17.
+
+Lewis, T.L., P.L. Flint, J.A. Schmutz, and D.V. Derksen. 2009. Temporal distributions and patterns of habitat use by black brant molting in the Teshekpuk Lake Special Area, Alaska. U.S. Geological Survey, Alaska Science Center, Anchorage, Alaska. 124pp.
+
+Mallek, E.J. 2011.  Teshekpuk Lake Molting Goose Survey - 2010. Unpublished Report. U.S. Fish and Wildlife Service, Fairbanks, Alaska. 16pp.
+
+Stehn, R.A., W.W. Larned, and R.M. Platte 2013. Analysis of aerial survey indices monitoring waterbird populations of the Arctic Coastal Plain, Alaska, 1986-2012. Unpublished Report. U.S. Fish and Wildlife Service, Anchorage, Alaska. 51 pp.
+
+U.S. BLM. 2008. Northeast National Petroleum Reserve-Alaska supplemental integrated activity plan, Record of Decision. U.S. Department of the Interior, Bureau of Land Management, Anchorage, Alaska. 99pp.
+
+U.S. BLM. 2013. Northeast National Petroleum Reserve-Alaska integrated activity plan, Record of Decision. U.S. Department of the Interior, Bureau of Land Management, Anchorage, Alaska. 106pp.
+
+Ward, D. H., J. Helmericks, J.W. hupp, L. McManus, M. Budde, D. C. Douglas, and K. D. Tape. 2015. Multi-decadal trends in spring arrival of avian migrants to the central Arctic coast of Alaska: effects of environmental and ecological factors. Journal of Avian Biology 46: 1-11.
+
+Wilson, H. M. 2015. Teshekpuk Lake Area Molting Goose Survey, 2014. Unpublished Report. U. S. Fish and Wildlife Service, Anchorage, Alaska. 13pp.
