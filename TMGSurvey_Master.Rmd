@@ -404,7 +404,7 @@ lake.agg.both<- aggregate(Count2~Lake2+Year, data=dat2[dat2$Year>=2012 & dat2$Ye
 lake.mean.both<- aggregate(Count2~Lake2, data=lake.agg.both, FUN=mean)
 missing.adults.both <-sum(lake.mean.both$Count2)
 ```
-<!--LaTeX code that adds a transparent DRAFT watermark-->
+<!--LaTeX code that adds a transparent DRAFT watermark
 \newsavebox\mybox
 \savebox\mybox{\tikz[color=red,opacity=0.3]\node{DRAFT};}
 \newwatermark*[
@@ -413,7 +413,7 @@ missing.adults.both <-sum(lake.mean.both$Count2)
   scale=8,
   xpos=-20,
   ypos=15
-]{\usebox\mybox}
+]{\usebox\mybox}-->
 
 \pagestyle{fancy}
 \fancyfoot[R]{\scriptsize USFWS, MBM-Teshekpuk Lake Molting Goose Survey, `r c.year`}
@@ -430,7 +430,7 @@ U.S. Fish and Wildlife Service, Migratory Bird Management, 1011 E. Tudor Rd., An
 **\large{ABSTRACT:}**
 This report summarizes the 36th annual, aerial survey of molting geese conducted near Teshekpuk Lake on the Arctic Coastal Plain of Alaska (ACP).  The survey was conducted between `r strftime( min(dat2$RDate[dat2$Year==as.numeric(c.year)]), "%d")` and `r strftime( max(dat2$RDate[dat2$Year==as.numeric(c.year)]), "%d %B")` `r c.year`. Total geese observed in the Teshekpuk Lake Traditional Survey Area, Cape Simpson, and Piasuk River Delta were `r n.total` (`r n.adults` adults and `r n.goslings` goslings). Species composition of adult geese counted across the survey area was: Pacific black brant (\textit{Branta bernicla nigricans})(`r n.percBLBRad`%), Taverner's cackling goose (\textit{Branta hutchinsii taverneri})(`r n.percCACGad`%), greater white-fronted goose (\textit{Anser albifrons frontalis})(`r n.percGWFGad`%), and lesser snow goose (\textit{Anser caerulescens caerulescens})(`r n.percSNGOad`%). Within the Teshekpuk Lake Traditional Survey Area, we recorded `r n.obsgeeseTA` observations totaling `r n.adultsTA+n.goslingsTA` geese (`r n.adultsTA` adults and `r n.goslingsTA` goslings).  However, data were not recorded by the right-front observer for 29 lakes (i.e., 14% of total lakes). Total counts of adults and (goslings) in the Traditional Survey Area by species were: Pacific black brant `r n.BLBRadultsTA` (`r n.BLBRgoslingsTA`), Taverner's cackling goose `r n.CACGadultsTA` (`r n.CACGgoslingsTA`), greater white-fronted goose `r n.GWFGadultsTA` (`r n.GWFGgoslingsTA`), and lesser snow goose `r n.SNGOadultsTA` (`r n.SNGOgoslingsTA`).
 
-\textbf{KEY WORDS: }aerial survey, Alaska, \textit{Anser albifrons frontalis}, \textit{Anser caerulescens caerulescens}, Pacific black brant, \textit{Branta bernicla nigricans}, \textit{Branta hutchinsii taverneri}, greater white-fronted goose, lesser snow goose, molting geese, National Petroleum Reserve, Taverner's cackling goose, Teshekpuk Lake.
+\textbf{KEY WORDS: }aerial survey, Alaska, \textit{Anser albifrons frontalis}, \textit{Anser caerulescens caerulescens}, Pacific black brant, \textit{Branta bernicla nigricans}, \textit{Branta hutchinsii taverneri}, greater white-fronted goose, lesser snow goose, molting geese, National Petroleum Reserve-Alaska, NPR-A, Taverner's cackling goose, Teshekpuk Lake.
 
 <!--This line inserts the report completion date with current month, Year taken from the computer clock-->
 \hfill\textit {`r format(Sys.Date(),"%B %Y")`}
@@ -438,9 +438,9 @@ This report summarizes the 36th annual, aerial survey of molting geese conducted
 \textbf{INTRODUCTION}\break
 The significance of the Teshekpuk Lake area to molting geese was first documented by Henry (Hank) Hansen and Jim King in 1957 (King 1970), and the importance of the area as goose molting habitat was affirmed by the Secretary of Interior in 1977 with the establishment of the Teshekpuk Lake Special Area (TLSA) within the larger National Petroleum Reserve-Alaska (Fig. 1).  Within the TLSA, the Bureau of Land Management (BLM) identified the area north and east of Teshekpuk Lake as a biologically sensitive Goose Molting Area (U.S. BLM 2008; Fig. 1). In addition, recognizing the international significance of the region to migratory waterbirds, a portion of this area was selected in 2017 as a Flyway Network Site (Jaensch 2013) by the East Asian-Australasian Flyway Partnership (\textcolor{blue}{http://www.eaaflyway.net/}).  The documented importance of the Teshekpuk Lake area to molting geese has been one of the primary justifications for protecting the TLSA from oil and gas leasing (U.S. BLM 2008, 2013).  From 1998 to 2008, no leasing was considered in the TLSA, in part, because of the sensitivity to disturbance of molting geese using the area. In 2008, a Record of Decision by BLM stated the area was intended for leasing, but only after a 10-yr delay (U.S. BLM 2008).  Under that scenario, lease sales would have been allowed starting in 2018.  However, in 2013, a new Record of Decision returned the status of most of the TLSA to no leasing, with a concurrent moratorium on construction of non-safety related infrastructure (U.S. BLM 2013). Accordingly, the 2013 Record of Decision by the BLM also changed the status of the Cape Simpson and Piasuk River Delta areas to no leasing, although infrastructure will be allowed (U.S. BLM 2013).
 
-Initial waterfowl surveys in the Teshekpuk Lake area were conducted by the U.S. Fish and Wildlife Service (USFWS) from 1976-78. Following these surveys and a 3-year hiatus (i.e., 1979-1981), the survey has been conducted annually since 1982. The long-term survey area is referred to as the Traditional Survey Area (Fig. 1). In 2010, 5 additional locations were identified as important molting areas as a result of studies conducted by the U.S. Geological Survey (USGS) Alaska Science Center (ASC)(Flint et al. 2008, Lewis et al. 2009). Based on this research and in an effort to specifically monitor brant abundance and use of areas outside of the Traditional Survey Area, these 5 new areas were added to the survey in 2010 (Mallek 2011).
+Initial waterfowl surveys in the Teshekpuk Lake area were conducted by the U.S. Fish and Wildlife Service (USFWS) from 1976-78. Following these surveys and a 3-year hiatus (i.e., 1979-1981), the survey has been conducted annually since 1982. The long-term survey area is referred to as the Traditional Survey Area (Fig. 1). In 2010, 5 additional locations were identified as important molting areas as a result of studies conducted by the U.S. Geological Survey (USGS) Alaska Science Center (ASC)(Flint et al. 2008, Lewis et al. 2009). Based on this research and in an effort to specifically monitor brant abundance and use of areas outside of the Traditional Survey Area, these 5 new areas were preliminarily surveyed in 2010; however, only 4 of these areas were permanently added to the overall TLSA survey area after the initial 2010 surveys. (Mallek 2011).
 
-The primary goal of the molting goose survey is to monitor the abundance and distribution of 4 species of geese (i.e., Pacific black brant [\textit{Branta bernicla nigricans}], Taverner's cackling goose [\textit{Branta hutchinsii taverneri}], greater white-fronted goose [\textit{Anser albifrons frontalis}], and lesser snow goose [\textit{Anser caerulescens caerulescens}]) during their flightless wing molt in the area north and east of Teshekpuk Lake. Specific objectives include measuring: 1) annual minimum counts and locations of adult geese and goslings, 2) relative species composition, 3) annual local production, and 4) opportunistic counts and locations of loons and swans. A secondary goal of the survey is to detect regional shifts in distribution by periodically monitoring numbers of molting geese in 5 additional areas between Cape Simpson and the Colville River Delta (Fig. 1).   
+The primary goal of the molting goose survey is to monitor the abundance and distribution of 4 species of geese (i.e., Pacific black brant [\textit{Branta bernicla nigricans}], Taverner's cackling goose [\textit{Branta hutchinsii taverneri}], greater white-fronted goose [\textit{Anser albifrons frontalis}], and lesser snow goose [\textit{Anser caerulescens caerulescens}]) during their flightless wing molt in the area north and east of Teshekpuk Lake. Specific objectives include: 1) acquiring annual minimum counts and locations of adult geese and goslings, 2) documenting relative species composition, 3) measuring annual local production, and 4) obtaining opportunistic counts and locations of loons (i.e., Pacific [\textit{Gavia pacifica}], red-throated  [\textit{Gavia stellata}], and yellow-billed [\textit{Gavia adamsii}]) and tundra swans (\textit{Cygnus columbianus}). A secondary goal of the survey is to detect regional shifts in distribution by periodically monitoring numbers of molting geese in 4 additional areas between Cape Simpson and the Colville River Delta (Fig. 1).   
 
 \begin{figure}[h]
 \includegraphics{tlsa_mgarea.png}
@@ -466,7 +466,7 @@ A second computer program, TRANSCRIBE (Hodges 2001, USFWS unpublished report) wa
 
 \setlength{\parskip}{4ex}
 \textbf{RESULTS}\newline
-Survey flights were conducted between`r strftime( min(dat2$RDate[dat2$Year==as.numeric(c.year)]), "%d")` and `r strftime( max(dat2$RDate[dat2$Year==as.numeric(c.year)]), "%d %B")` with pilot-observer B. Shults and observer T. Zeller (Fig. 3). Total counts of geese, loons, and swans within each survey unit in the Traditional Survey Area are provided in Table 1. Table 2 and Figure 5 illustrate the number of adult geese by species counted from 1982-2017 in the Traditional Survey Area. Summary observation totals for geese and goslings in the Cape Simpson and Piasuk River Delta are provided in Table 3.
+Survey flights were conducted between `r strftime( min(dat2$RDate[dat2$Year==as.numeric(c.year)]), "%d")` and `r strftime( max(dat2$RDate[dat2$Year==as.numeric(c.year)]), "%d %B")` with pilot-observer B. Shults and observer T. Zeller (Fig. 3). Total counts of geese, loons, and swans within each survey unit in the Traditional Survey Area are provided in Table 1. Table 2 and Figure 5 illustrate the number of adult geese by species counted from 1982-2017 in the Traditional Survey Area. Summary observation totals for geese and goslings in the Cape Simpson and Piasuk River Delta are provided in Table 3.
 
 \begin{figure}[h]
 \includegraphics{Tesh_flightlines_2017.png}
@@ -486,7 +486,7 @@ Survey flights were conducted between`r strftime( min(dat2$RDate[dat2$Year==as.n
 \end{figure}
 
 \textbf{Traditional Survey Area}\newline
-Survey flights were conducted between `r strftime( min(dat2$RDate[dat2$Year==as.numeric(c.year) & dat2$Area=="Traditional"]), "%d")` and `r strftime( max(dat2$RDate[dat2$Year==as.numeric(c.year) & dat2$Area=="Traditional"]), "%d %B")`. Total flight time to complete the survey from a start in Fairbanks, a base of operations in Deadhorse, and a return flight to Anchorage was 35 hrs. Total flight time spent within the survey areas was 15.7 hours. We recorded `r n.obsgeeseTA` observations totaling `r n.adultsTA+n.goslingsTA` geese (`r n.adultsTA` adults and `r n.goslingsTA` goslings). The pilot and observer recorded `r n.lfobspercTA`% and `r n.rfobspercTA`% of the observations, respectively. However, observations were not recorded by the observer for 29 lakes. Relative abundance of adult geese counted within each survey unit varied across the survey area (Fig. 4). Species composition  and age-class (i.e., adult vs. gosling) of geese counted was: Pacific black brant (`r n.percBLBRadTA`%) [`r n.BLBRadultsTA` adults and `r n.BLBRgoslingsTA` goslings], greater white-fronted goose (`r n.percGWFGadTA`%) [`r n.GWFGadultsTA` adults and `r n.GWFGgoslingsTA` goslings], Taverner's cackling geese (`r n.percCACGadTA`%) (`r n.CACGadultsTA` adults and `r n.CACGgoslingsTA` goslings), and  lesser snow goose (`r n.percSNGOad`%) [`r n.SNGOadultsTA` adults and `r n.SNGOgoslingsTA` goslings]. Incidental observations of tundra swans totaled `r n.TUSWadTA` adults and `r n.TUSWjuvTA` cygnets.  Pacific loon, red-throated loon, and yellow-billed loon totals were `r n.PALOTA`, `r n.RTLOTA`, and `r n.YBLOTA`, respectively.
+Survey flights were conducted between `r strftime( min(dat2$RDate[dat2$Year==as.numeric(c.year) & dat2$Area=="Traditional"]), "%d")` and `r strftime( max(dat2$RDate[dat2$Year==as.numeric(c.year) & dat2$Area=="Traditional"]), "%d %B")`. Total flight time to complete the survey from a start in Fairbanks, a base of operations in Deadhorse, and a return flight to Anchorage was 35 hrs. Total flight time spent within the survey areas was 15.7 hours. We recorded `r n.obsgeeseTA` observations totaling `r n.adultsTA+n.goslingsTA` geese (`r n.adultsTA` adults and `r n.goslingsTA` goslings). The pilot and observer recorded `r n.lfobspercTA`% and `r n.rfobspercTA`% of the observations, respectively. However, observations were not recorded by the observer for 29 lakes. Relative abundance of adult geese counted within each survey unit varied across the survey area (Fig. 4). Species composition  and age-class (i.e., adult vs. gosling) of geese counted was: Pacific black brant (`r n.percBLBRadTA`%) [`r n.BLBRadultsTA` adults and `r n.BLBRgoslingsTA` goslings], greater white-fronted goose (`r n.percGWFGadTA`%) [`r n.GWFGadultsTA` adults and `r n.GWFGgoslingsTA` goslings], Taverner's cackling goose (`r n.percCACGadTA`%) (`r n.CACGadultsTA` adults and `r n.CACGgoslingsTA` goslings), and  lesser snow goose (`r n.percSNGOad`%) [`r n.SNGOadultsTA` adults and `r n.SNGOgoslingsTA` goslings]. Incidental observations of tundra swans totaled `r n.TUSWadTA` adults and `r n.TUSWjuvTA` cygnets.  Pacific loon, red-throated loon, and yellow-billed loon totals were `r n.PALOTA`, `r n.RTLOTA`, and `r n.YBLOTA`, respectively.
 
 ```{r Fig_One, eval=FALSE}
 #ggplot2 line graph of adult numbers 1982-current year
@@ -497,7 +497,7 @@ ggplot(data=dat1, aes(x=Year, y=dat1$Count2, group=dat1$Spp2))+
   geom_line(aes(color=dat1$Spp2))+
   geom_point(aes(color=dat1$Spp2))+
   theme(plot.title=element_text(hjust = 0.5, family="serif"))+
-  labs(y="Number of Molting Adults", x="Year", caption="Figure 5. Total adult geese counted by species, 1982-2017, Teshekpuk Lake Special Area.", family="serif")+
+  labs(y="Number of Molting Adults", x="Year", caption="Figure 5. Total adult geese counted by species, 1982-2017, Teshekpuk Lake Traditional Survey Area.", family="serif")+
   labs(color="")+
   theme(legend.position = "top")+
     scale_y_continuous(limits = c(0,50000))+
@@ -543,7 +543,7 @@ ggplot(data=fig.dat, aes(x=as.numeric(Year), y=fig.dat$Count2, group=fig.dat$Spp
   geom_line(aes(color=fig.dat$Spp2))+
   geom_point(aes(color=fig.dat$Spp2))+
   theme(plot.title=element_text(hjust = 0.5, family="serif"))+
-  labs(y="Number of Molting Adults", x="Year", caption="Figure 5. Total adult geese counted by species, 1976-2017, Teshekpuk Lake Special Area.", family="serif")+
+  labs(y="Number of Molting Adults", x="Year", caption="Figure 5. Total adult geese counted by species, 1976-2017, Teshekpuk Lake Traditioanl Survey Area.", family="serif")+
   labs(color="")+
   theme(legend.position = "top")+
     scale_y_continuous(limits = c(0,50000))+
@@ -553,7 +553,7 @@ ggplot(data=fig.dat, aes(x=as.numeric(Year), y=fig.dat$Count2, group=fig.dat$Spp
   
 ```
 \textbf{Additional Survey Areas}\newline
-The Cape Simpson and Piasuk River areas were surveyed on 18 July in approximately 54 and 76 minutes, respectively. We recorded `r n.obsgeesePR` observations totaling `r n.adultsPR + n.goslingsPR` geese (`r n.adultsPR` adults and `r n.goslingsPR` goslings) at the Piasuk River, and species composition of adults was `r n.percBLBRadPR`% Pacific black brant, `r n.percGWFGadPR`% greater white-fronted goose, and `r n.percSNGOadPR`% lesser snow goose. Taverner's cackling geese were less than 1% of total adult geese observed. Total geese observed at Cape Simpson was `r n.adultsCS+n.goslingsCS` (`r n.adultsCS` adults and `r n.goslingsCS` goslings) in `r n.obsgeeseCS` observations, and the adult composition was `r n.percBLBRadCS`% Pacific black brant, `r n.percCACGadCS`% Taverner's cackling goose, `r n.percGWFGadCS`% greater white-fronted goose, and `r n.percSNGOadCS`% lesser snow goose. For both areas, incidental observations of tundra swans totaled `r n.TUSWad-n.TUSWadTA` adults and `r n.TUSWjuv-n.TUSWjuvTA` cygnets.  Pacific loon, red-throated loon, and yellow-billed loon totals were `r n.PALO-n.PALOTA`, `r n.RTLO-n.RTLOTA`, and `r n.YBLO-n.YBLOTA`, respectively. Summary data are provided in Table 3.
+The Cape Simpson and Piasuk River areas were surveyed on 18 July in 54 and 76 minutes, respectively. We recorded `r n.obsgeesePR` observations totaling `r n.adultsPR + n.goslingsPR` geese (`r n.adultsPR` adults and `r n.goslingsPR` goslings) at the Piasuk River, and species composition of adults was `r n.percBLBRadPR`% Pacific black brant, `r n.percGWFGadPR`% greater white-fronted goose, and `r n.percSNGOadPR`% lesser snow goose. Taverner's cackling geese were less than 1% of total adult geese observed. Total geese observed at Cape Simpson were `r n.adultsCS+n.goslingsCS` (`r n.adultsCS` adults and `r n.goslingsCS` goslings) in `r n.obsgeeseCS` observations, and the adult composition was `r n.percBLBRadCS`% Pacific black brant, `r n.percCACGadCS`% Taverner's cackling goose, `r n.percGWFGadCS`% greater white-fronted goose, and `r n.percSNGOadCS`% lesser snow goose. For both areas, incidental observations of tundra swans totaled `r n.TUSWad-n.TUSWadTA` adults and `r n.TUSWjuv-n.TUSWjuvTA` cygnet.  Pacific loon, red-throated loon, and yellow-billed loon totals were `r n.PALO-n.PALOTA`, `r n.RTLO-n.RTLOTA`, and `r n.YBLO-n.YBLOTA`, respectively. Summary data are provided in Table 3.
 
 \textbf{DISCUSSION}\break
 Survey flights began 2 days earlier than the mean start date of recent surveys (i.e., 16 July [2003-2017]). The survey ended 1 day earlier (i.e., 18 July) than the mean end date (i.e., 19 July) for the same period. Very few geese were observed flying and therefore major movements of geese from one survey unit to another during the survey period were unlikely. Given the documented advance in overall phenology and earlier arrival dates of goose species on the Arctic Coastal Plain (Ward et al. 2015), subsequent molting surveys should begin on or before the mean start date to reduce bias as a result of post-molt movement.
@@ -566,7 +566,7 @@ The number of adult geese counted in 2017 was 12% lower than 2016, but missing d
 \textbf{Additional Survey Areas}\newline
 Adult numbers for all species, except snow geese at Cape Simpson were lower than in 2016 and below five-year averages. Black brant adult numbers declined the most with 30% and 61% declines for Cape Simpson and Piasuk River, respectively. A 63% decline in adult Taverner's cackling geese relative to 2016 was also notable at Cape Simpson.
 
-Long-term survey data and previous research studies show that the TLSA is important molting habitat not only for brant, but also for Taverner's cackling, Greater white-fronted, and Lesser snow geese. These survey data are crucial to monitor molting habitat use and to evaluate changes in abundance and distribution as a result of habitat changes that may be caused by climate change or future resource development.
+Long-term survey data and previous research studies show that the TLSA is important molting habitat not only for brant, but also for Taverner's cackling, greater white-fronted, and lesser snow geese. These survey data are crucial to monitor molting habitat use and to evaluate changes in abundance and distribution as a result of habitat changes that may be caused by climate change or future resource development.
 
 \textbf{ACKNOWLEDGEMENTS}\newline
 We recognize Hank Hanson and Jim King (both USFWS-retired) for first documenting the importance of the Teshekpuk Lake area to waterfowl and Rod King (USFWS-MBM Fairbanks retired; 1982-1999) and Ed Mallek (USFWS-MBM Fairbanks; 2000-2013) and their observers for collecting the majority of historical data. We thank the Kanuti NWR and National Park Service staff for providing housing, office, and aircraft support in Bettles. Funding for this survey was provided by the BLM.\newline
@@ -705,6 +705,20 @@ kable_styling(position = "center")%>%
 row_spec(37, bold=T)%>%
 column_spec(1:5,width = "5em")
 ```
+```{r Long-term Means}
+#Long-term mean counts for tradtional by species, age for 76-17
+mean_76_17.count <- aggregate(Count2~Spp2, data=tab_76_17.melt, FUN=mean)
+#10 year mean
+mean_08_17.count <- aggregate(Count2~Spp2, data=tab_76_17.melt, subset = tab_76_17.melt$Year>2007,FUN=mean)
+#transpose for bind to kable_76_17
+mean_76_17_transpose <- as.data.frame(t(round(mean_76_17.count$Count2,0)))
+mean_76_17_transpose$blank <- NA
+mean_76_17ord<- as.data.frame(mean_76_17_transpose[c(9,1,2,3,4,5,6,7,8)])
+colnames(mean_76_17ord)<- c("YEAR","BLBR", "CACG", "GWFG", "SNGO","BLBRG", "CACGG", "GWFGG", "SNGOG")
+#rbind the mean to bottom of table
+tab_76_17 <- rbind(tab_76_17, mean_76_17ord)
+tab_76_17[is.na(tab_76_17)] <-"Mean 76-17"
+```
 
 ```{r Kable_76_17}
 #creates the summary table for 76_17
@@ -713,7 +727,7 @@ library(kableExtra)
 options(knitr.table.format = "latex")
 #column names character vector
 col.headers <- c("Year","BLBR", "CACG", "GWFG", "SNGO","BLBR", "CACG", "GWFG", "SNGO")
-kable(tab_76_17, format = "latex", booktabs = T, format.args=list(big.mark=","),col.names=col.headers, caption = "Summary of geese counted in the Teshekpuk Lake Special Area, 1976-2017.")%>%
+kable(tab_76_17, format = "latex", booktabs = T, format.args=list(big.mark=","),col.names=col.headers, caption = "Summary of geese counted in the Teshekpuk Lake Traditional Survey Area, 1976-2017.")%>%
 add_header_above(c("","Adults"=4,"Goslings"=4)) %>% 
 kable_styling(position = "center")
 ```
@@ -773,7 +787,7 @@ library(knitr)
 library(kableExtra)
 t3 <- (table3)
 options(knitr.table.format = "latex")
-kable(t3, format = "latex", booktabs = T, format.args=list(big.mark=","),caption = "Summary of geese counted in the Cape Simpson and Piasuk River survey areas, 2016-2017.")%>%
+kable(t3, format = "latex", booktabs = T, format.args=list(big.mark=","),caption = "Summary of geese counted in the Cape Simpson and Piasuk River survey areas, 2010-2017.")%>%
 add_header_above(c("","Adults"=4,"Goslings"=4)) %>%
 group_rows("Piasuk River",1,8)%>%
 group_rows("Cape Simpson",9,16)%>%
