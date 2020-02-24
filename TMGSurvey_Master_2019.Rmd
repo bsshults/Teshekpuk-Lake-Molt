@@ -1,0 +1,1175 @@
+---
+header-includes:
+- \usepackage{tikz}
+- \usepackage{float}
+- \usepackage[printwatermark]{xwatermark}
+- \usepackage{xcolor}
+- \usepackage{longtable}
+- \usepackage{caption}
+- \usepackage{subcaption}
+- \captionsetup{justification= raggedright, singlelinecheck = false, labelsep=period}
+- \usepackage{booktabs}
+- \usepackage{wrapfig}
+- \usepackage{colortbl}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \setlength{\parskip}{4ex}
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+  html_document: default
+  word_document: default
+---
+```{r, include=FALSE}
+require(readxl)
+require(knitr)
+require(pander)
+options(knitr.table.format = "latex")
+#next line turns scientific notation off
+options(scipen=999)
+#next line suppresses output to pdf
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message=FALSE)
+#This knitr function puts commas in numerics and none in character numbers (e.g. year) for inline R code (i.e. `r...`) for output; could also set for individual chunks
+knitr::knit_hooks$set(inline = function(x) {
+      if(is.numeric(x)){
+          return(prettyNum(x, big.mark=","))
+      }else{
+          return(x)
+       }
+   })
+```
+```{r Read_Data_File 1976_2005, include=FALSE}
+#dat4 is the excel spreadsheet from Paul Flint, USGS-ASC, that was used to for the Teshekpuk publication in Polar Biol (2008) and includes lake data from 1976-2005; Obtained from Philip Martin (and Mallek) who attributed data to numbered lakes or segments
+path2dat76_05 <- "K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/1976_2005/TESH_Revision_v4_Historical_Data_FromFlint.csv"
+dat76_05 <- read.csv(path2dat76_05, header = TRUE)
+#This cleans the csv file of blank, unwanted columns that were imported
+library(dplyr)
+dat76_05<- dat76_05 %>% select(-starts_with("X"))
+```
+```{r Read_Data_Files 2006_2010, include=FALSE}
+#These are traditional area only data from excel sheets for 2006-2009; unused columns are omitted on the upload
+library(data.table)
+dat2006 <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2006/TMG_2006_RawObs_EJM_HMW.csv", select = c(1:6,10:13,15:16),skip = 1,header = FALSE)
+dat2007 <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2007/TMG_2007_RawObs_EJM_HMW.csv", select = c(1:6,10:13,15:16),skip = 1)
+dat2008 <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2008/TMG_2008_RawObs_EJM_HMW.csv", select = c(1:6,10:13,15:16),skip = 1)
+dat2009 <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2009/TMG_2009_RawObs_EJM_KSB.csv", select = c(1:6,10:13,15:16),skip = 1)
+
+#Create dataframe for 2006-2009
+dat06_09_temp <- rbind(dat2006, dat2007, dat2008, dat2009,use.names=FALSE)
+#Create the Area and aircraft variables
+dat06_09_temp$Area <- "TRADITIONAL"
+dat06_09_temp$Aircraft <- NA
+dat06_09_reorder <-dat06_09_temp[,c(1:5,13,6,14,7:12)]
+
+#Assign new column names
+colnames(dat06_09_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft","File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat06_09 <- dat06_09_reorder
+#reformat year, month, day variables into month-day-year format
+#dat06_09$RDate <- as.Date(paste(dat06_09$Month,"-", dat06_09$Day, "-", dat06_09$Year, sep=""), format = "%m-%d-%Y")
+
+#Upload data from 2010 which includes the first year with new additional areas
+dat2010_TA <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2010/EMallek_KBollinger/TMG_2010_RawObs_EJM_KSB.csv", select = c(1:5,7,14:17,19:20),skip=1)
+dat2010_TA$Area <- "TRADITIONAL"
+dat2010_TA$Aircraft <- NA
+
+#Upload additional areas data
+dat2010_AAs <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2010/EMallek_KBollinger/TMG_2010_RawObs_Add_Areas.csv", select = c(1:5,7,14:17,19:20),skip=1)
+#Add the Area variable and recode
+dat2010_AAs$Area <-ifelse(dat2010_AAs$V7=="SW SMITH BAY","PIASUK",ifelse(dat2010_AAs$V7=="CAPE SIMPSON","SIMPSON",ifelse(dat2010_AAs$V7=="ESKIMO ISL","ESKIMO",ifelse(dat2010_AAs$V7=="ATIGARU PT","ATIGARU",ifelse(dat2010_AAs$V7=="N KOGRU","KOGRU","COLVILLE")))))
+dat2010_AAs$Aircraft <- NA
+
+#Combine the 2010 files
+dat2010_temp <- rbind(dat2010_TA,dat2010_AAs)
+dat2010_reorder <- dat2010_temp[,c(1:5,13,6,14,7:12)]
+#Assign new column names
+colnames(dat2010_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft","File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2010 <- dat2010_reorder
+
+#Combine 2006-2009 and 2010 Data Files
+dat06_10 <- rbind(dat06_09,dat2010)
+
+#reformat date into month-day-year format
+dat06_10$RDate <- as.Date(paste(dat06_10$Month,"-", dat06_10$Day, "-", dat06_10$Year, sep=""), format = "%m-%d-%Y")
+
+#Recode Goose and Loon Species to standard AOU codes
+dat06_10$Spp2[dat06_10$Species%in%c("WFGOad", "WFGOjuv", "GWFGB", "GWFG")] <- "GWFG"
+dat06_10$Spp2[dat06_10$Species%in%c("BLBRad", "BLBRjuv", "BLBRB", "BLBR")] <- "BLBR"
+dat06_10$Spp2[dat06_10$Species%in%c("SNGOad", "SNGOjuv", "SNGOB", "SNGO","SNOG")] <- "SNGO"
+dat06_10$Spp2[dat06_10$Species%in%c("CAGOad", "CAGOjuv", "CAGOB", "CAGO", "CACG")] <- "CACG"
+dat06_10$Spp2[dat06_10$Species%in%c("TUSWad", "TUSWjuv", "SWAN", "SWANC", "TUSW")] <- "TUSW"
+dat06_10$Spp2[dat06_10$Species%in%c("PALOad", "PALOjuv", "PALO","PALOB")] <- "PALO"
+dat06_10$Spp2[dat06_10$Species%in%c("YBLOad", "YBLOjuv", "YBLO")] <- "YBLO"
+dat06_10$Spp2[dat06_10$Species%in%c("RTLOad", "RTLOjuv", "RTLO")] <- "RTLO"
+dat06_10$Spp2[dat06_10$Species=="SNOW"] <- "SNOW"
+
+#This trims the last 2 letters off species to recode as "ad" or "juv"
+dat06_10$Age <- substr(x = dat06_10$Species, 5,6)
+dat06_10$Age[!dat06_10$Age%in%c("ad", "ju","B","C")] <- NA
+dat06_10$Age[is.na(dat06_10$Age)]<- "ad"
+dat06_10$Age[dat06_10$Age%in%c("C","B")] <- "ju"
+
+#Recode dat06_10 into Species/Age Column Spp2
+dat06_10$Spp2Age[dat06_10$Spp2==("BLBR") & dat06_10$Age=="ad"] <- "BLBR"
+dat06_10$Spp2Age[dat06_10$Spp2==("BLBR") & dat06_10$Age=="ju"] <- "BLBRG"
+dat06_10$Spp2Age[dat06_10$Spp2==("CACG") & dat06_10$Age=="ad"] <- "CACG"
+dat06_10$Spp2Age[dat06_10$Spp2==("CACG") & dat06_10$Age=="ju"] <- "CACGG"
+dat06_10$Spp2Age[dat06_10$Spp2==("GWFG") & dat06_10$Age=="ad"] <- "GWFG"
+dat06_10$Spp2Age[dat06_10$Spp2==("GWFG") & dat06_10$Age=="ju"] <- "GWFGG"
+dat06_10$Spp2Age[dat06_10$Spp2==("SNGO") & dat06_10$Age=="ad"] <- "SNGO"
+dat06_10$Spp2Age[dat06_10$Spp2==("SNGO") & dat06_10$Age=="ju"] <- "SNGOG"
+dat06_10$Spp2Age[dat06_10$Spp2==("PALO") & dat06_10$Age=="ad"] <- "PALO"
+dat06_10$Spp2Age[dat06_10$Spp2==("RTLO") & dat06_10$Age=="ad"]<- "RTLO"
+dat06_10$Spp2Age[dat06_10$Spp2==("YBLO") & dat06_10$Age=="ad"]<- "YBLO"
+dat06_10$Spp2Age[dat06_10$Spp2==("PALO") & dat06_10$Age=="ju"] <- "PALOj"
+dat06_10$Spp2Age[dat06_10$Spp2==("RTLO") & dat06_10$Age=="ju"]<- "RTLOj"
+dat06_10$Spp2Age[dat06_10$Spp2==("YBLO") & dat06_10$Age=="ju"]<- "YBLOj"
+
+dat06_10$Spp2Age[dat06_10$Spp2==("TUSW") & dat06_10$Age=="ad"] <- "TUSW"
+dat06_10$Spp2Age[dat06_10$Spp2==("TUSW") & dat06_10$Age=="ju"] <- "TUSWC"
+
+#Create the Lake2 variable
+dat06_10$Lake2<-dat06_10$Lake
+
+#Create the Count2 variable for bind and get summary data for 06-09
+dat06_10$Count2 <- dat06_10$Count
+```
+```{r Read_Data_2011_2017}
+#Read 2011 Data
+dat2011_TA <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2011/TMG_2011_RawObs_EJM_CPD.csv", select = c(1:5,7,10,14:17,19:20), skip=1)
+dat2011_AAs <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2011/TMG_2011_RawObs_Add_Areas.csv", select = c(1:5,7,10,14:17,19:20), skip=1)
+dat2011_temp <- rbind(dat2011_TA,dat2011_AAs)
+dat2011_temp$Area <-ifelse(dat2011_temp$V7=="PIASUK RIV DELTA","PIASUK",ifelse(dat2011_temp$V7=="CAPE SIMPSON","SIMPSON","TRADITIONAL"))
+dat2011_reorder <- dat2011_temp[,c(1:5,14,6:7,8:13)]
+colnames(dat2011_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft","File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2011 <- dat2011_reorder
+
+#Read and clean data for 2012
+#Traditional Area
+dat2012_TA <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2012/EMallek/TMG_2012_RawObs_EJM_CPD.csv", select = c(1:11,13:14), skip=1)
+#Create the Area variable
+dat2012_TA$Area <- "TRADITIONAL"
+#Reorder columns to match dat_6_10 columns order for bind 
+dat2012_TA_Reorder <- dat2012_TA[,c(1:5,14,7,8:13)]
+colnames(dat2012_TA_Reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+#Additional Areas
+dat2012_AAs <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2012/EMallek/TMG_2012_RawObs_Add_Areas.csv", select = c(1:10,12:13), skip=1)
+#Add a column for Lake/Transect Number
+dat2012_AAs$Lake<- NA
+#Rename CAPESIMPSON TO CAPE SIMPSON
+dat2012_AAs$V6[dat2012_AAs$V6=="CAPESIMPSON"] <- "CAPE SIMPSON"
+#Reorder columns to match dat_6_10 columns order for bind 
+dat2012_AAs_Reorder <- dat2012_AAs[,c(1:6,13,7:12)]
+colnames(dat2012_AAs_Reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+#Bind All 2012 Data
+dat2012_bind <- rbind(dat2012_TA_Reorder,dat2012_AAs_Reorder)
+#Add a column for Aircraft(N736)
+dat2012_bind$Aircraft<- "N736"
+dat2012 <- dat2012_bind[,c(1:7,14,8:13)]
+colnames(dat2012) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+
+#Read 2013 Data
+library(data.table)
+dat2013_temp <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2013/TMG_2013_RawObs_EJM_HMW_CPD.csv", select = c(1:13), skip=1)
+#Create the Area variable 
+dat2013_temp$Area <- ifelse(dat2013_temp$V4=="Piasuk","PIASUK",ifelse(dat2013_temp$V4=="Simpson","SIMPSON","TRADITIONAL"))
+dat2013_reorder <- dat2013_temp[,c(1:3,5,6,14,4,7:13)]
+colnames(dat2013_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2013 <- dat2013_reorder
+
+#Read 2014 Traditional Area Data
+dat2014_TA_temp <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2014/TMG_2014_RawObs_HMW_BSS.csv", select = c(1:6,12:15,17:18), skip=1)
+dat2014_TA_temp$Area <- "TRADITIONAL"
+dat2014_TA_temp$Aircraft <- "N9623R"
+dat2014_TA_temp$V4 <- ifelse(dat2014_TA_temp$V4=="obs","RF","LF")
+dat2014_TA_reorder <- dat2014_TA_temp[,c(1:5,13,6,14,7:12)]
+colnames(dat2014_TA_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2014_TA <- dat2014_TA_reorder 
+
+#Read 2014 Additional Areas
+dat2014_AAs_temp <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2014/TMG_2014_RawObs_Add_Areas.csv", select = c(1:6, 12:15,17:19), skip=1)
+dat2014_AAs_temp$Aircraft <- "N9623R"
+dat2014_AAs_temp$V4 <- ifelse(dat2014_AAs_temp$V4=="obs","RF","LF")
+dat2014_AAs_temp$V19 <- ifelse(dat2014_AAs_temp$V19=="Piasuk","PIASUK",ifelse(dat2014_AAs_temp$V19=="Cape Simpson","SIMPSON","IKPIKPUK"))
+dat2014_AAs_reorder <- dat2014_AAs_temp[,c(1:5,13,6,14,7:12)]
+colnames(dat2014_AAs_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2014_AAs <- dat2014_AAs_reorder 
+
+#Combine both 2014 files
+dat2014 <- rbind(dat2014_TA,dat2014_AAs)
+
+#Read 2015 Traditional Area Data
+dat2015_TA <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2015/TMG_2015_RawObs_Traditional_BSS_CPD.csv", select = c(1:3,6:13,16:17), skip=1)
+dat2015_TA$Area <- "TRADITIONAL"
+dat2015_TA$V9 <- ifelse(dat2015_TA$V9=="375F","N375F", "N375F")
+dat2015_TA_reorder <- dat2015_TA[,c(1:3,5:6,14,4,7,8:13)]
+colnames(dat2015_TA_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2015_TA <- dat2015_TA_reorder 
+
+#Read 2015 Colville River Data 
+dat2015_CR <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2015/TMG_2015_RawObs_Colville_BSS_CPD.csv", select = c(1:3,6:13,15:16), skip=1)
+dat2015_CR$Area <- "COLVILLE"
+
+#Read 2015 Piasuk River Data
+dat2015_PR <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2015/TMG_2015_RawObs_Piasuk_BSS_CPD.csv", select = c(1:3,6:13,15:16), skip=1)
+dat2015_PR$Area <- "PIASUK"
+
+#Read 2015 Cape Simpson Data
+dat2015_CS <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2015/TMG_2015_RawObs_Simpson_BSS_CPD.csv", select = c(1:3,6:13,15:16), skip=1)
+dat2015_CS$Area <- "SIMPSON"
+
+#Combine 2015 Additional Area Files
+dat2015_AAs_temp <- rbind(dat2015_PR,dat2015_CR,dat2015_CS)
+dat2015_AAs_temp$V9 <- ifelse(dat2015_AAs_temp$V9=="375f","N375F", "N375F")
+dat2015_AAs_temp_reorder <- dat2015_AAs_temp[,c(1:3,5:6,14,4,7,8:13)]
+colnames(dat2015_AAs_temp_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2015_AAs <- dat2015_AAs_temp_reorder 
+
+#Combine 2015 files
+dat2015 <- rbind(dat2015_TA,dat2015_AAs)
+
+#Read 2016 Data; Traditional Area and Additional Areas (Piasuk and Cape Simpson) included
+dat2016_BS <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2016/BShults/TMG_2016_RawObs_BShults.csv", select = c(1:11,13:14))
+dat2016_TZ <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2016/TZeller/TMG_2016_RawObs_TZeller.csv", select = c(1:11,13:14), skip=1)
+#Combine files
+dat2016_temp <- rbind(dat2016_BS,dat2016_TZ)
+
+#Clean the 2016 data
+#Recode the PIASUK and Cape SIMPSON sample unit identifiers to either "SIMPSON" or "PIASUK"
+dat2016_temp$Area[dat2016_temp$V4%in%c("s", "s1", "s2", "s3","s4","s5","s6","s7","s8","s10","s11","s12","s13","s14","s15","s16","S", "S1", "S3", "S4","S5","S6","S7","S8","S10","S11","S12","S13","S14","S15","S16")] <- "SIMPSON"
+dat2016_temp$Area[dat2016_temp$V4%in%c("p", "p1", "p2", "p3","p4","p5","p6","p7","p8","p9","P", "P1", "P2", "P3","P4","P5","P6","P7","P8","P9","t1", "t2", "t3", "t4","t5","t6","t7","t8","t9","TRAN 1","TRAN 2","TRAN 3","TRAN 4","TRAN 5","TRAN 6","TRAN 7","TRAN 8","TRAN 9")] <- "PIASUK"
+dat2016_temp$Area[is.na(dat2016_temp$Area)]<- "TRADITIONAL"
+dat2016_temp$V7 <- "N77554"
+dat2016_reorder <- dat2016_temp[,c(1:3,5:6,14,4,7:13)]
+colnames(dat2016_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2016 <- dat2016_reorder
+
+#Read 2017 Data; Traditional Area and Additional Areas (Piasuk and Cape Simpson) included
+dat2017_BS <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2017/BShults/TMG_2017_RawObs_BShults.csv", select = c(1:13))
+dat2017_TZ <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2017/TZeller/TMG_2017_RawObs_TZeller.csv", select = c(1:13))
+
+#Combine 2017 files
+dat2017_temp <- rbind(dat2017_BS,dat2017_TZ,use.names=FALSE)
+
+#Clean the 2017 data
+#Recode the PIASUK and Cape SIMPSON sample unit identifiers to either "SIMPSON" or "PIASUK"
+dat2017_temp$Area[dat2017_temp$V4%in%c("s", "s1", "s2", "s3","s4","s5","s6","s7","s8","s10","s11","s12","s13","s14","s15","s16","S", "S1", "S3", "S4","S5","S6","S7","S8","S10","S11","S12","S13","S14","S15","S16")] <- "SIMPSON"
+dat2017_temp$Area[dat2017_temp$V4%in%c("p", "p1", "p2", "p3","p4","p5","p6","p7","p8","p9","P", "P1", "P2", "P3","P4","P5","P6","P7","P8","P9","t1", "t2", "t3", "t4","t5","t6","t7","t8","t9","TRAN 1","TRAN 2","TRAN 3","TRAN 4","TRAN 5","TRAN 6","TRAN 7","TRAN 8","TRAN 9")] <- "PIASUK"
+dat2017_temp$Area[is.na(dat2017_temp$Area)]<- "TRADITIONAL"
+dat2017_temp$V7 <- "N77554"
+dat2017_reorder <- dat2017_temp[,c(1:3,5:6,14,4,7:13)]
+colnames(dat2017_reorder) <- c("Year", "Month", "Day", "Seat", "Observer", "Area", "Lake", "Aircraft", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+dat2017 <- dat2017_reorder
+
+#Combine data files for 2011-2017
+dat2011_2017 <- rbind(dat2011,dat2012,dat2013,dat2014,dat2015,dat2016,dat2017)
+
+#reformat data into month-day-year format
+dat2011_2017$RDate <- as.Date(paste(dat2011_2017$Month,"-", dat2011_2017$Day, "-", dat2011_2017$Year, sep=""), format = "%m-%d-%Y")
+
+#Recode Species to standard standard AOU codes
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("WFGOad", "WFGOjuv", "GWFGB", "GWFG")] <- "GWFG"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("BLBRad", "BLBRjuv", "BLBRB", "BLBR")] <- "BLBR"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("SNGOad", "SNGOjuv", "SNGOB", "SNGO","SNOG")] <- "SNGO"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("CAGOad", "CAGOjuv", "CAGOB", "CAGO", "CACG")] <- "CACG"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("TUSWad", "TUSWjuv", "SWAN", "SWANC", "TUSW")] <- "TUSW"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("PALOad", "PALOjuv", "PALO","PALOB")] <- "PALO"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("YBLOad", "YBLOjuv", "YBLO")] <- "YBLO"
+dat2011_2017$Spp2[dat2011_2017$Species%in%c("RTLOad", "RTLOjuv", "RTLO")] <- "RTLO"
+dat2011_2017$Spp2[dat2011_2017$Species=="SNOW"] <- "SNOW"
+
+#This trims the last 2 letters off species to recode as "ad" or "juv"
+dat2011_2017$Age <- substr(x = dat2011_2017$Species, 5,6)
+dat2011_2017$Age[!dat2011_2017$Age%in%c("ad", "ju","B","C")] <- NA
+dat2011_2017$Age[is.na(dat2011_2017$Age)]<- "ad"
+dat2011_2017$Age[dat2011_2017$Age%in%c("C","B")] <- "ju"
+
+#Recode dat2011_2017 into Species/Age Column Spp2
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("BLBR") & dat2011_2017$Age=="ad"] <- "BLBR"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("BLBR") & dat2011_2017$Age=="ju"] <- "BLBRG"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("CACG") & dat2011_2017$Age=="ad"] <- "CACG"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("CACG") & dat2011_2017$Age=="ju"] <- "CACGG"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("GWFG") & dat2011_2017$Age=="ad"] <- "GWFG"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("GWFG") & dat2011_2017$Age=="ju"] <- "GWFGG"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("SNGO") & dat2011_2017$Age=="ad"] <- "SNGO"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("SNGO") & dat2011_2017$Age=="ju"] <- "SNGOG"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("PALO") & dat2011_2017$Age=="ad"] <- "PALO"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("RTLO") & dat2011_2017$Age=="ad"]<- "RTLO"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("YBLO") & dat2011_2017$Age=="ad"]<- "YBLO"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("PALO") & dat2011_2017$Age=="ju"] <- "PALOj"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("RTLO") & dat2011_2017$Age=="ju"]<- "RTLOj"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("YBLO") & dat2011_2017$Age=="ju"]<- "YBLOj"
+
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("TUSW") & dat2011_2017$Age=="ad"] <- "TUSW"
+dat2011_2017$Spp2Age[dat2011_2017$Spp2==("TUSW") & dat2011_2017$Age=="ju"] <- "TUSWC"
+
+#Create the Lake2 variable for bind and Recode lakes into the "TRADITIONAL" area
+dat2011_2017$Lake2<-dat2011_2017$Lake
+
+#Create the Count2 variable for bind and get summary data for 06-09
+dat2011_2017$Count2 <- dat2011_2017$Count
+
+#Recode mispelled Area "TRADTIONAL" and CAPE SIMPSON to SIMPSON
+dat2011_2017$Area[(dat2011_2017$Area=="TRADTIONAL")] <- "TRADITIONAL"
+dat2011_2017$Area[dat2011_2017$Area=="CAPE SIMPSON"] <- "SIMPSON"
+```
+```{r Read_Data_File 2018}
+#Append 2018 data and set up columns for bind to dat2
+library(data.table)
+#Shults Data (1 file)
+dat_BSS <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2018/BShults/TMG_2018_RawObs_BShults.csv", select = c(1:6,8:11,13:14))
+colnames(dat_BSS) <- c("Year", "Month", "Day", "Lake","Seat", "Observer", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+
+#Zeller data (1 file)
+dat_TKZ <- fread ("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2018/TZeller/TMG_2018_RawObs_TZeller.csv", select = c(1:5,7,14:17,19:20))
+
+#Reorder dat_TKZ columns to match dat_BSS columns order for bind into dat_2018 
+dat_TKZReorder <- dat_TKZ[,c(1:3,6,4,5,7,8:12)]
+colnames(dat_TKZReorder) <- c("Year", "Month", "Day", "Lake", "Seat", "Observer", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+
+#Bind shults and zeller data into dat2018
+dat_2018 <- rbind(dat_TKZReorder,dat_BSS)
+
+#reformat data into month-day-year format
+dat_2018$RDate <- as.Date(paste(dat_2018$Month,"-", dat_2018$Day, "-", dat_2018$Year, sep=""), format = "%m-%d-%Y")
+
+#Recode Species to standard standard AOU codes
+dat_2018$Spp2[dat_2018$Species%in%c("WFGOad", "WFGOjuv", "GWFGB", "GWFG")] <- "GWFG"
+dat_2018$Spp2[dat_2018$Species%in%c("BLBRad", "BLBRjuv", "BLBRB", "BLBR")] <- "BLBR"
+dat_2018$Spp2[dat_2018$Species%in%c("SNGOad", "SNGOjuv", "SNGOB", "SNGO","SNOG")] <- "SNGO"
+dat_2018$Spp2[dat_2018$Species%in%c("CAGOad", "CAGOjuv", "CAGOB", "CAGO", "CACG")] <- "CACG"
+dat_2018$Spp2[dat_2018$Species%in%c("TUSWad", "TUSWjuv", "SWAN", "SWANC", "TUSW")] <- "TUSW"
+dat_2018$Spp2[dat_2018$Species%in%c("PALOad", "PALOjuv", "PALO","PALOB")] <- "PALO"
+dat_2018$Spp2[dat_2018$Species%in%c("YBLOad", "YBLOjuv", "YBLO")] <- "YBLO"
+dat_2018$Spp2[dat_2018$Species%in%c("RTLOad", "RTLOjuv", "RTLO")] <- "RTLO"
+
+#This trims the last 2 letters off species to recode as "ad" or "juv"
+dat_2018$Age <- substr(x = dat_2018$Species, 5,6)
+dat_2018$Age[!dat_2018$Age%in%c("ad", "ju","B","C")] <- NA
+dat_2018$Age[is.na(dat_2018$Age)]<- "ad"
+dat_2018$Age[dat_2018$Age%in%c("C","B")] <- "ju"
+
+#Recode dat_2018 into Species/Age Column Spp2
+dat_2018$Spp2Age[dat_2018$Spp2==("BLBR") & dat_2018$Age=="ad"] <- "BLBR"
+dat_2018$Spp2Age[dat_2018$Spp2==("BLBR") & dat_2018$Age=="ju"] <- "BLBRG"
+dat_2018$Spp2Age[dat_2018$Spp2==("CACG") & dat_2018$Age=="ad"] <- "CACG"
+dat_2018$Spp2Age[dat_2018$Spp2==("CACG") & dat_2018$Age=="ju"] <- "CACGG"
+dat_2018$Spp2Age[dat_2018$Spp2==("GWFG") & dat_2018$Age=="ad"] <- "GWFG"
+dat_2018$Spp2Age[dat_2018$Spp2==("GWFG") & dat_2018$Age=="ju"] <- "GWFGG"
+dat_2018$Spp2Age[dat_2018$Spp2==("SNGO") & dat_2018$Age=="ad"] <- "SNGO"
+dat_2018$Spp2Age[dat_2018$Spp2==("SNGO") & dat_2018$Age=="ju"] <- "SNGOG"
+dat_2018$Spp2Age[dat_2018$Spp2==("PALO") & dat_2018$Age=="ad"] <- "PALO"
+dat_2018$Spp2Age[dat_2018$Spp2==("RTLO") & dat_2018$Age=="ad"]<- "RTLO"
+dat_2018$Spp2Age[dat_2018$Spp2==("YBLO") & dat_2018$Age=="ad"]<- "YBLO"
+dat_2018$Spp2Age[dat_2018$Spp2==("TUSW") & dat_2018$Age=="ad"] <- "TUSW"
+dat_2018$Spp2Age[dat_2018$Spp2==("TUSW") & dat_2018$Age=="ju"] <- "TUSWC"
+
+#Create the Lake2 variable for bind and Recode lakes into the "TRADITIONAL" area
+dat_2018$Lake2<-dat_2018$Lake
+dat_2018$Area[dat_2018$Lake2>0] <- "TRADITIONAL"
+
+#Add a blank column for Aircraft in dat06_09 for bind
+dat_2018$Aircraft <- "N9623R" 
+
+#Create the Count2 variable for bind and get summary data for 06-09
+dat_2018$Count2 <- dat_2018$Count
+
+#Reorder 2018 for bind to dat2006_2010
+dat2018 <- dat_2018[,c(1:3,5:6,18,4,19,7:17,20)]
+
+#create file with all lakes with zero observations
+#dat_2018_ZEROS <- dat_2018[(dat_2018$Species %in% #c("START","ENDPT","TBEG","TEND")),]
+
+
+#remove rows with no data; i.e. START, ENDPT, TBEG, and TEND
+#dat_2018 <- dat_2018[!(dat_2018$Species %in% c("START","ENDPT","TBEG","TEND")),]
+```
+```{r Read_Data_Files 2019}
+#Append 2019 data and set up columns for bind to dat2; skip first line with headers (i.e., skip=1)
+library(data.table)
+#Shults Data (1 file)
+dat_BSS19 <- fread ("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2019/BShults/TMG_2019_RawObs_BShults.csv", select = c(1:11,13:14), skip=1)
+#Zeller data (1 file)
+dat_TKZ19 <- fread ("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2019/TZeller/TMG_2019_RawObs_TZeller.csv", select = c(1:11,13:14), skip=1)
+#Marks data (1 file)
+dat_DKM19 <- fread ("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2019/DMarks/TMG_2019_RawObs_DMarks.csv", select = c(1:11,13:14), skip=1)
+#Wilson data (1 file)
+dat_HMW19 <- fread ("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/2019/HWilson/TMG_2019_RawObs_HWilson.csv", select = c(1:11,13:14), skip=1)
+
+#Bind into dat_2019 and name columns
+dat_2019 <- rbind(dat_BSS19, dat_TKZ19, dat_DKM19, dat_HMW19)
+colnames(dat_2019) <- c("Year", "Month", "Day", "Area","Lake", "Seat", "Observer", "File", "Latitude", "Longitude", "Time" ,"Species", "Count")
+
+#reformat data into month-day-year format
+dat_2019$RDate <- as.Date(paste(dat_2019$Month,"-", dat_2019$Day, "-", dat_2019$Year, sep=""), format = "%m-%d-%Y")
+
+#Recode Species to standard standard AOU codes
+dat_2019$Spp2[dat_2019$Species%in%c("GWFGjuv","GWFGad")] <- "GWFG"
+dat_2019$Spp2[dat_2019$Species%in%c("BLBRad", "BLBRjuv")] <- "BLBR"
+dat_2019$Spp2[dat_2019$Species%in%c("SNGOad", "SNGOjuv")] <- "SNGO"
+dat_2019$Spp2[dat_2019$Species%in%c("CCGOad", "CCGOjuv")] <- "CACG"
+dat_2019$Spp2[dat_2019$Species%in%c("TUSWad", "TUSWjuv")] <- "TUSW"
+dat_2019$Spp2[dat_2019$Species%in%c("PALOad", "PALOjuv")] <- "PALO"
+dat_2019$Spp2[dat_2019$Species%in%c("YBLOad", "YBLOjuv")] <- "YBLO"
+dat_2019$Spp2[dat_2019$Species%in%c("RTLOad", "RTLOjuv")] <- "RTLO"
+dat_2019$Spp2[dat_2019$Species%in%c("SNOW")] <- "SNOW"
+
+#This trims the last 2 letters off species to recode as "ad" or "juv"
+dat_2019$Age <- substr(x = dat_2019$Species, 5,6)
+dat_2019$Age[!dat_2019$Age%in%c("ad", "ju","B","C")] <- NA
+dat_2019$Age[is.na(dat_2019$Age)]<- "ad"
+dat_2019$Age[dat_2019$Age%in%c("C","B")] <- "ju"
+
+#Recode dat_2019 into Species/Age Column Spp2
+dat_2019$Spp2Age[dat_2019$Spp2==("BLBR") & dat_2019$Age=="ad"] <- "BLBR"
+dat_2019$Spp2Age[dat_2019$Spp2==("BLBR") & dat_2019$Age=="ju"] <- "BLBRG"
+dat_2019$Spp2Age[dat_2019$Spp2==("CACG") & dat_2019$Age=="ad"] <- "CACG"
+dat_2019$Spp2Age[dat_2019$Spp2==("CACG") & dat_2019$Age=="ju"] <- "CACGG"
+dat_2019$Spp2Age[dat_2019$Spp2==("GWFG") & dat_2019$Age=="ad"] <- "GWFG"
+dat_2019$Spp2Age[dat_2019$Spp2==("GWFG") & dat_2019$Age=="ju"] <- "GWFGG"
+dat_2019$Spp2Age[dat_2019$Spp2==("SNGO") & dat_2019$Age=="ad"] <- "SNGO"
+dat_2019$Spp2Age[dat_2019$Spp2==("SNGO") & dat_2019$Age=="ju"] <- "SNGOG"
+dat_2019$Spp2Age[dat_2019$Spp2==("PALO") & dat_2019$Age=="ad"] <- "PALO"
+dat_2019$Spp2Age[dat_2019$Spp2==("RTLO") & dat_2019$Age=="ad"]<- "RTLO"
+dat_2019$Spp2Age[dat_2019$Spp2==("YBLO") & dat_2019$Age=="ad"]<- "YBLO"
+dat_2019$Spp2Age[dat_2019$Spp2==("TUSW") & dat_2019$Age=="ad"] <- "TUSW"
+dat_2019$Spp2Age[dat_2019$Spp2==("TUSW") & dat_2019$Age=="ju"] <- "TUSWC"
+
+#Create the Lake2 variable for bind
+dat_2019$Lake2<-dat_2019$Lake
+
+#Add a column for Aircraft for bind (HMW/DKM N9623R; BSS/TKZ N721NR)
+ dat_2019$Aircraft[dat_2019$Observer %in% c("BSS", "TKZ")]<- "N721NR"
+ dat_2019$Aircraft[dat_2019$Observer %in% c("DKM", "HMW")]<- "N9623R"
+
+#Create the Count2 variable for bind
+dat_2019$Count2 <- dat_2019$Count
+
+#Reorder the columns for the bind
+dat2019 <- dat_2019[,c(1:3,5:6,18,4,19,7:17,20)]
+
+#Lakes not surveyed in 2019; Creates a list of lake numbers that are missing from the data file
+#file with lake numbers 1-209
+lakes.master=read.csv("lakenumbers.csv", header=FALSE, colClasses = c("integer"))
+#converts dataframe to vector
+lakes <- dplyr::pull(lakes.master,V1)
+#lakes surveyed
+surveyed <- as.integer(unique(dat_2019$Lake))
+matched <- intersect(lakes, surveyed)
+all <- union(lakes,surveyed)
+#lakes not surveyed
+unsurveyed19 <- all[!all %in% matched]
+```
+```{r Combine 2006_2019 Data Files}
+dat2006_2019 <- rbind(dat06_10,dat2011_2017,dat2018,dat2019)
+```
+```{r Final_Recode_dat2006_2019}
+#Convert Count2 to Integer
+dat2006_2019$Count2 <- as.integer(as.character(dat2006_2019$Count))
+#Convert all character fields to UPPERCASE
+dat2006_2019$Area <-toupper(dat2006_2019$Area)
+dat2006_2019$Observer <- toupper(dat2006_2019$Observer)
+dat2006_2019$Seat <- toupper(dat2006_2019$Seat)
+
+#Correct 9623R to N9623R
+dat2006_2019$Aircraft[dat2006_2019$Aircraft=="9623R"] <- "N9623R"
+
+#Recode lakes as Integers for the "TRADITIONAL" area only
+dat2006_2019$Lake2 <- as.integer(as.character(dat2006_2019$Lake))
+
+#Recode START/END as standard protocol
+dat2006_2019$Species[dat2006_2019$Species%in%c("START","BEGT","TBEG")] <- "START"
+dat2006_2019$Species[dat2006_2019$Species%in%c("END","ENDT","TEND","ENDPT")] <- "END"
+#Correct Age column to NA for SPECIES=START or END
+dat2006_2019$Age[dat2006_2019$Species%in%c("START","END")] <- NA
+
+```
+```{r Summarize 2006_2019 Data for Tables and Figures}
+##Summarize data for tables and figures; sum.count_06_19 are counts by year, species, age , and area from dat2006_2019
+sum.count_06_19 <- aggregate(formula=Count2~Year+Spp2+Age+Area, FUN=sum, data=dat2006_2019, na.rm=TRUE)
+```
+```{r Summarize 1976_2005 Data for Tables and Figures}
+#Summary Data by species/age for 1976-2005
+#Also renames the variables to match variable names for 06-19
+library(dplyr)
+t7 <- dat76_05 %>%
+  #this groups by year
+  group_by(YEAR)%>%
+  rename(BLBR=BLBR, GWFG=GWFG, SNGO=SNGO, TUSW=TUSW, TUSWC=JUVTUSW, CACG=CAGO, CACGG=JUVCAGO, GWFGG=JUVGWFG, SNGOG=JUVSNGO, BLBRG=JUVBLBR)%>%
+  #this removes the NA cases from the sums for GWFGs;no other NAs for other variables
+  filter(!is.na(GWFG) & !is.na(GWFGG))%>%
+  #this sums by species
+  summarise(BLBR=sum(BLBR),CACG=sum(CACG),GWFG=sum(GWFG),SNGO=sum(SNGO),BLBRG=sum(BLBRG),CACGG=sum(CACGG),GWFGG=sum(GWFGG),SNGOG=sum(SNGOG))
+```
+```{r 76_05_by_lake_summary}
+library(dplyr)
+lake.sum_76_05 <- dat76_05 %>%
+  #this groups by lake
+  group_by(LAKE)%>%
+  rename(BLBR=BLBR, GWFG=GWFG, SNGO=SNGO, TUSW=TUSW, TUSWC=JUVTUSW, CACG=CAGO, CACGG=JUVCAGO, GWFGG=JUVGWFG, SNGOG=JUVSNGO, BLBRG=JUVBLBR)%>%
+  #this removes the NA cases from the sums for GWFGs;no other NAs for other variables
+  filter(!is.na(GWFG) & !is.na(GWFGG))%>%
+  #this sums by species
+  summarise(BLBR=sum(BLBR),CACG=sum(CACG),GWFG=sum(GWFG),SNGO=sum(SNGO),BLBRG=sum(BLBRG),CACGG=sum(CACGG),GWFGG=sum(GWFGG),SNGOG=sum(SNGOG))
+```
+```{r Summarize_Data_for Table 2006_2019 }
+tab8.years<-with(sum.count_06_19,sum.count_06_19[order(sum.count_06_19$Area,sum.count_06_19$Spp2,sum.count_06_19$Age,sum.count_06_19$Year),])
+tab8.years<-filter(tab8.years,tab8.years$Area=="TRADITIONAL")
+table8 <- data.frame(
+  "YEAR" =as.character(unique(tab8.years$Year)),
+  "BLBR" =tab8.years$Count2[tab8.years$Spp2=="BLBR"& tab8.years$Age=="ad"&tab8.years$Area=="TRADITIONAL"],
+  "CACG" =tab8.years$Count2[tab8.years$Spp2=="CACG"& tab8.years$Age=="ad"&tab8.years$Area=="TRADITIONAL"],
+  "GWFG" =tab8.years$Count2[tab8.years$Spp2=="GWFG"&tab8.years$Age=="ad"&tab8.years$Area=="TRADITIONAL"],
+  "SNGO" =tab8.years$Count2[tab8.years$Spp2=="SNGO"& tab8.years$Age=="ad"&tab8.years$Area=="TRADITIONAL"],
+  "BLBRG" =tab8.years$Count2[tab8.years$Spp2=="BLBR"& tab8.years$Age=="ju"&tab8.years$Area=="TRADITIONAL"],
+  "CACGG" =tab8.years$Count2[tab8.years$Spp2=="CACG"& tab8.years$Age=="ju"&tab8.years$Area=="TRADITIONAL"],
+  "GWFGG" =tab8.years$Count2[tab8.years$Spp2=="GWFG"& tab8.years$Age=="ju"&tab8.years$Area=="TRADITIONAL"],
+  "SNGOG" =tab8.years$Count2[tab8.years$Spp2=="SNGO"& tab8.years$Age=="ju"&tab8.years$Area=="TRADITIONAL"])
+ 
+colnames(table8) <- c("YEAR","BLBR", "CACG","GWFG","SNGO","BLBR","CACG","GWFG","SNGO")
+row.names(table8) <- NULL
+```
+```{r Combine 1976_2019 Data for Table}
+tab_76_19<-rbind(t7,table8)
+#makes a dataframe of year by species by count for the line graph
+tab_76_19.melt<-reshape2::melt(tab_76_19, id="YEAR")
+names(tab_76_19.melt)<-c("Year","Spp2","Count2")
+```
+```{r Date_String_Conversion}
+#this chunk formats day and month into a string e.g., 15-17 Sept, etc. from day, month, year columns in the data file; used in tables and text
+year.dates=data.frame(Year=sort(unique(dat2006_2019$Year)), dates=rep("hold", length(unique(dat2006_2019$Year))))
+year.dates$dates=as.character(year.dates$dates)
+for (i in 1:length(unique(dat2006_2019$Year))) {
+  for (j in 1:length(sort(unique(dat2006_2019$Month[dat2006_2019$Year==unique(dat2006_2019$Year)[i]])))) {
+  
+    temp=sort(unique(dat2006_2019$date[dat2006_2019$Year==unique(dat2006_2019$Year)[i] & dat2006_2019$Month==sort(unique(dat2006_2019$Month[dat2006_2019$Year==unique(dat2006_2019$Year)[i]]))[j]]))
+  
+    for (k in 1:length(temp)){
+      
+      if(k != length(temp)){
+        
+        if(k == 1){temp2 = substring(temp[1],1,2)
+        temp2=paste(temp2,",", sep="")
+        }
+        
+        if(k != 1){temp2 = paste(temp2, substring(temp[k],1,2), ", " , sep="")}
+      }
+        
+      if(k == length(temp) & k != 1){temp2 = paste(temp2, temp[k], sep="")}  
+      if(k == length(temp) & k == 1){temp2=temp[1]}
+        
+      }
+      
+    if(j==1){temp3=temp2}
+    if(j == length(sort(unique(dat2006_2019$Month[dat2006_2019$Year==unique(dat2006_2019$Year)[i]]))) & j==1){year.dates$dates[i]=temp2}
+    if(j==2){year.dates$dates[i]=paste(temp3, "; ", temp2, sep="")}
+    rm(temp2)
+    
+  }
+}
+```
+```{r Report_Text_Objects}
+#set up some objects for text
+#current year
+c.year <- as.character(max(dat2006_2019$Year))
+n.year <- as.numeric(max(dat2006_2019$Year))
+#Conversion to M-D-Y format
+dat2006_2019$RDate <- as.Date(paste(dat2006_2019$Month,"-", dat2006_2019$Day, "-", dat2006_2019$Year, sep=""), format = "%m-%d-%Y")
+```
+```{r Long-term Means}
+#Long-term mean counts for TRADITIONAL by species, age for 76-19
+mean_76_19.count <- aggregate(Count2~Spp2, data=tab_76_19.melt, FUN=mean)
+#10 year mean
+mean_10_19.count <- aggregate(Count2~Spp2, data=tab_76_19.melt, subset = tab_76_19.melt$Year>2008,FUN=mean)
+#transpose for bind to kable_76_19
+mean_76_19_transpose <- as.data.frame(t(round(mean_76_19.count$Count2,0)))
+mean_76_19_transpose$blank <- NA
+mean_76_19ord<- as.data.frame(mean_76_19_transpose[c(9,1,2,3,4,5,6,7,8)])
+colnames(mean_76_19ord)<- c("YEAR","BLBR", "CACG", "GWFG", "SNGO","BLBRG", "CACGG", "GWFGG", "SNGOG")
+#add the mean to the bottom line of table
+tab_76_19 <- rbind(tab_76_19, mean_76_19ord)
+tab_76_19[is.na(tab_76_19)] <-"Mean 76-19"
+```
+```{r}
+#This function adds a row to the dataframe for years/species/age with 0 values
+MakeZeroes=function(sp.by.area.year){
+
+  year.list=c(2010,2011,2012,2013,2014,2015,2016,2017,2018,2019)
+  sp.list=c("BLBR", "CACG", "GWFG", "SNGO")
+  area.list=c("ATIGARU","COLVILLE","ESKIMO","PIASUK","SIMPSON","IKPIKPUK","KOGRU")
+  age.list=c("ju","ad")
+ 
+for (h in 1:length(age.list)){
+  for (i in 1:length(sp.list)){
+    for (j in 1:length(year.list)){
+      for (k in 1:length(area.list)){
+
+
+      if(any(as.character(sp.by.area.year$Age)==age.list[h] & as.character(sp.by.area.year$Spp2)==sp.list[i] & as.character(sp.by.area.year$Year)==year.list[j] & as.character(sp.by.area.year$Area)==area.list[k]))
+      {next}
+
+      if(any(as.character(sp.by.area.year$Area)==area.list[k] & as.character(sp.by.area.year$Year)==year.list[j]))
+      {
+        new.row=c(year.list[j], sp.list[i],age.list[h], area.list[k],0)
+      sp.by.area.year=rbind(sp.by.area.year,new.row)
+      }
+      }
+      }
+
+  }
+  }
+  sp.by.area.year$Count2=as.numeric(sp.by.area.year$Count2)
+  return(sp.by.area.year)
+
+}  
+```
+
+```{r}
+#TRADITIONAL Area summary data
+#adult totals for TRADITIONAL area and current year
+n.GWFGadultsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGadultsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOadultsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRadultsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="BLBR"])
+n.adultsTA <- (n.GWFGadultsTA+n.CACGadultsTA+n.SNGOadultsTA+n.BLBRadultsTA)
+#gosling totals for TRADITIONAL area current year
+n.GWFGgoslingsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGgoslingsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOgoslingsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRgoslingsTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="BLBR"])
+n.goslingsTA <- (n.GWFGgoslingsTA+n.CACGgoslingsTA+n.SNGOgoslingsTA+n.BLBRgoslingsTA)
+n.percGWFGadTA <- round((n.GWFGadultsTA/n.adultsTA * 100),0)
+n.percCACGadTA <- round((n.CACGadultsTA/n.adultsTA * 100),0)
+n.percSNGOadTA <- round((n.SNGOadultsTA/n.adultsTA * 100),0)
+n.percBLBRadTA <- round((n.BLBRadultsTA/n.adultsTA * 100),0)
+
+#Cape SIMPSON
+#adult totals for current year
+n.GWFGadultsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGadultsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOadultsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRadultsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="BLBR"])
+n.adultsCS <- (n.GWFGadultsCS+n.CACGadultsCS+n.SNGOadultsCS+n.BLBRadultsCS)
+
+#gosling totals current year
+n.GWFGgoslingsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGgoslingsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOgoslingsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRgoslingsCS <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="SIMPSON" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="BLBR"])
+n.goslingsCS <- (n.GWFGgoslingsCS+n.CACGgoslingsCS+n.SNGOgoslingsCS+n.BLBRgoslingsCS)
+#Percent Composition of adults
+n.percGWFGadCS <- round((n.GWFGadultsCS/n.adultsCS * 100),0)
+n.percCACGadCS <- round((n.CACGadultsCS/n.adultsCS * 100),0)
+n.percSNGOadCS <- round((n.SNGOadultsCS/n.adultsCS * 100),0)
+n.percBLBRadCS <- round((n.BLBRadultsCS/n.adultsCS * 100),0)
+
+#PIASUK River
+#adult totals for current year
+n.GWFGadultsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGadultsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOadultsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRadultsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="BLBR"])
+n.adultsPR <- (n.GWFGadultsPR+n.CACGadultsPR+n.SNGOadultsPR+n.BLBRadultsPR)
+#gosling totals for TRADITIONAL area current year
+n.GWFGgoslingsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGgoslingsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOgoslingsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRgoslingsPR <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="PIASUK" & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="BLBR"])
+n.goslingsPR <- (n.GWFGgoslingsPR+n.CACGgoslingsPR+n.SNGOgoslingsPR+n.BLBRgoslingsPR)
+
+#Percent Composition of adults
+n.percGWFGadPR <- round((n.GWFGadultsPR/n.adultsPR * 100),0)
+n.percCACGadPR <- round((n.CACGadultsPR/n.adultsPR * 100),0)
+n.percSNGOadPR <- round((n.SNGOadultsPR/n.adultsPR * 100),0)
+n.percBLBRadPR <- round((n.BLBRadultsPR/n.adultsPR * 100),0)
+
+
+
+#Tundra Swans Summary
+#Total adults across all areas, current year
+n.TUSWad <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="TUSW"])
+#Total cygnets across all areas, current year
+n.TUSWjuv <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="TUSW"])
+#TUSW for TRADITIONAL area only
+#Adults
+n.TUSWadTA <- sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" &sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="TUSW"])
+#Cygnets
+n.TUSWjuvTA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Area=="TRADITIONAL" &sum.count_06_19$Age=="ju" & sum.count_06_19$Spp2=="TUSW"])
+
+#Loons Summary across all areas
+n.PALO <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="PALO"])
+n.RTLO <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="RTLO"])
+n.YBLO <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="YBLO"])
+#Loons summary for TRADITIONAL area only
+n.PALOTA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Spp2=="PALO"])
+n.RTLOTA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Spp2=="RTLO"])
+n.YBLOTA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Area=="TRADITIONAL" & sum.count_06_19$Spp2=="YBLO"])
+
+#Current year Numbers of observations (geese) TRADITIONAL Area
+n.obsgeeseTA <- length(dat2006_2019$Area[dat2006_2019$Area=="TRADITIONAL" & dat2006_2019$Year==c.year & dat2006_2019$Spp2 %in% c("GWFG", "BLBR", "SNGO", "CACG")])
+
+#current year Numbers of observations (geese) Cape SIMPSON Area
+n.obsgeeseCS <- length(dat2006_2019$Area[dat2006_2019$Area=="SIMPSON" & dat2006_2019$Year==c.year & dat2006_2019$Spp2 %in% c("GWFG", "BLBR", "SNGO", "CACG")])
+
+#current year numbers of observations (geese) PIASUK river Area
+n.obsgeesePR <- length(dat2006_2019$Area[dat2006_2019$Area=="PIASUK" & dat2006_2019$Year==c.year & dat2006_2019$Spp2 %in% c("GWFG", "BLBR", "SNGO", "CACG")])
+
+# current year number of observations (geese) by pilot (LF) in Tradtitional area
+n.lfobsTA <- length(dat2006_2019$Seat[dat2006_2019$Seat=="LF" & dat2006_2019$Area=="TRADITIONAL" & dat2006_2019$Year==c.year & dat2006_2019$Spp2 %in% c("GWFG", "BLBR", "SNGO", "CACG")])
+
+#current year number of observations (geese) by observer (RF) in Tradtitional area
+n.rfobsTA <- length(dat2006_2019$Seat[dat2006_2019$Seat=="RF" & dat2006_2019$Area=="TRADITIONAL" & dat2006_2019$Year==c.year & dat2006_2019$Spp2 %in% c("GWFG", "BLBR", "SNGO", "CACG")])
+
+#Current year % obs by seat in TRADITIONAL area
+n.LFobspercTA <- round((n.lfobsTA/(n.lfobsTA+n.rfobsTA) * 100),0)
+n.RFobspercTA <- round((n.rfobsTA/(n.lfobsTA+n.rfobsTA) * 100),0)
+#Totals
+
+n.total<-(n.adultsTA+n.adultsCS+n.adultsPR+n.goslingsTA+n.goslingsCS+n.goslingsPR)
+#Adults only
+n.adults <- (n.adultsTA+n.adultsCS+n.adultsPR)
+
+n.goslings <- (n.goslingsTA+n.goslingsCS+n.goslingsPR)
+#Total Adults for all areas in current year
+n.GWFGad <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="GWFG"])
+n.CACGad <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="CACG"])
+n.SNGOad <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="SNGO"])
+n.BLBRad <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="BLBR"])
+
+#Percent Composition of adults across all areas, current year
+n.percGWFGad <- round((n.GWFGad/n.adults * 100),0)
+n.percCACGad <- round((n.CACGad/n.adults * 100),0)
+n.percSNGOad <- round((n.SNGOad/n.adults * 100),0)
+n.percBLBRad <- round((n.BLBRad/n.adults * 100),0)
+```
+```{r Table3_Additional_Areas}
+#created a dataframe with adult geese in the addtional areas only
+areasads <-subset(sum.count_06_19, sum.count_06_19$Spp2%in%c("BLBR", "CACG", "GWFG", "SNGO")& sum.count_06_19$Age=="ad"& sum.count_06_19$Area!="TRADITIONAL")
+#create a dataframe with goslings only in the additional areas only
+areasg <- subset(sum.count_06_19, sum.count_06_19$Spp2%in%c("BLBR", "CACG", "GWFG", "SNGO")& sum.count_06_19$Age=="ju"& sum.count_06_19$Area!="TRADITIONAL")
+#created a dataframe with all geese in additional areas 2010-2019
+areasall<- rbind(areasg,areasads)
+#add zeros to species/age where no geese were observed in each area for each year surveyed
+areasall_zeros <- MakeZeroes (areasall)
+areasall_sort <- areasall_zeros[order(areasall_zeros$Year,areasall_zeros$Area,areasall_zeros$Spp2,areasall_zeros$Age,areasall_zeros$Count2),]
+
+#Number of Adults in Additional Areas in current Year
+n.adultAA.cy <- sum(areasads$Count2[areasads$Year==c.year])
+
+#Total Adults across all areas for current year
+n.adultsall.cy <- (n.adultsTA + n.adultAA.cy)
+
+#Goslings only; current year
+n.goslingsAA.cy <- sum(areasg$Count2[areasg$Year==c.year])
+n.goslingsall.cy <- (n.goslingsTA + n.goslingsAA.cy)
+
+#Current Year Total Geese
+n.total.cy <-(n.adultsall.cy + n.goslingsall.cy)
+
+#Current year Numbers of observations (geese) Additional Areas
+n.obsgeeseAA <- length(dat2006_2019$Area[dat2006_2019$Area!="TRADITIONAL" & dat2006_2019$Year==c.year & dat2006_2019$Spp2 %in% c("GWFG", "BLBR", "SNGO", "CACG")])
+
+#Total Adults for additional areas in current year
+n.GWFGadAA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="GWFG" & sum.count_06_19$Area!="TRADITIONAL"])
+n.CACGadAA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="CACG"& sum.count_06_19$Area!="TRADITIONAL"])
+n.SNGOadAA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="SNGO"& sum.count_06_19$Area!="TRADITIONAL"])
+n.BLBRadAA <-sum(sum.count_06_19$Count2[sum.count_06_19$Year==c.year & sum.count_06_19$Age=="ad" & sum.count_06_19$Spp2=="BLBR"& sum.count_06_19$Area!="TRADITIONAL"])
+
+#Percent Composition of adults additional areas, current year
+n.percGWFGadAA <- round((n.GWFGadAA/n.adultAA.cy * 100),0)
+n.percCACGadAA <- round((n.CACGadAA/n.adultAA.cy * 100),0)
+n.percSNGOadAA <- round((n.SNGOadAA/n.adultAA.cy * 100),0)
+n.percBLBRadAA <- round((n.BLBRadAA/n.adultAA.cy* 100),0)
+```
+```{r Lakes not Surveyed in 2019}
+#file with lake numbers 1-209
+lakes.master=read.csv("lakenumbers.csv", header=FALSE, colClasses = c("integer"))
+#converts dataframe to vector
+lakes <- dplyr::pull(lakes.master,V1)
+#lakes surveyed
+surveyed <- as.integer(unique(dat2006_2019$Lake[dat2006_2019$Area=="TRADITIONAL" & dat2006_2019$Year==2019]))
+matched <- intersect(lakes, surveyed)
+all <- union(lakes,surveyed)
+#lakes not surveyed
+unsurveyed.lakes <- as.integer(all[!all %in% matched])
+```
+```{r Lake_list_by_plane_2019}
+#Check for double counting of lakes in traditional area; Matched will yield common lakes; null="no double counting of any lakes"
+BSTZ_lakes <- as.integer(unique(dat2006_2019$Lake[dat2006_2019$Area=="TRADITIONAL" & dat2006_2019$Year==2019 & dat2006_2019$Aircraft=="N721NR"]))
+HWDM_lakes <- as.integer(unique(dat2006_2019$Lake[dat2006_2019$Area=="TRADITIONAL" & dat2006_2019$Year==2019 & dat2006_2019$Aircraft=="N9623R"]))
+matched <- intersect(BSTZ_lakes,HWDM_lakes)
+```
+
+<!--LaTeX code that adds a transparent DRAFT watermark
+\newsavebox\mybox
+\savebox\mybox{\tikz[color=red,opacity=0.3]\node{DRAFT};}
+\newwatermark*[
+  allpages,
+  angle=45,
+  scale=8,
+  xpos=-20,
+  ypos=15
+]{\usebox\mybox}-->
+
+\pagestyle{fancy}
+\fancyfoot[R]{\scriptsize USFWS, MBM-Teshekpuk Lake Molting Goose Survey, `r c.year`}
+\renewcommand{\footrulewidth}{1pt}
+\renewcommand{\headrulewidth}{0pt}
+
+
+\large
+\textbf{Abundance and Distribution of Molting Geese in the vicinity of Teshekpuk Lake, Alaska, July 2019} \hfill
+
+\large
+\textbf{Brad S. Shults}, \textbf{Tamara K. Zeller}, \textbf{Heather M. Wilson}, and \textbf{Dennis K. Marks}.\newline
+U.S. Fish and Wildlife Service, Migratory Bird Management, 1011 E. Tudor Rd., Anchorage, AK 99503
+
+\textbf{ABSTRACT}:
+This report summarizes the 38th annual, aerial survey of molting geese conducted near Teshekpuk Lake on the Arctic Coastal Plain of Alaska (ACP). The survey was conducted between `r strftime( min(dat2006_2019$RDate[dat2006_2019$Year==as.numeric(c.year)]), "%d")` and `r strftime( max(dat2006_2019$RDate[dat2006_2019$Year==as.numeric(c.year)]), "%d %B")` utilizing two amphibious-equipped Cessna 206 aircraft (N9623R and N721NR). We observed `r n.total.cy` geese (`r n.adultsall.cy` adults and `r n.goslingsall.cy` goslings).  Species composition of adult geese observed was: Pacific black brant (`r n.percBLBRad`%), Taverner's cackling goose (`r n.percCACGad`%), greater white-fronted goose (`r n.percGWFGad`%), and lesser snow goose (`r n.percSNGOad`%). Within the Teshekpuk Lake Traditional Survey Area, we recorded `r n.obsgeeseTA` observations totaling `r n.adultsTA+n.goslingsTA` geese (`r n.adultsTA` adults and `r n.goslingsTA` goslings). Total counts of adults and (goslings) in the Traditional Survey Area by species were: Pacific black brant (\textit{Branta bernicla nigricans}) `r n.BLBRadultsTA` (`r n.BLBRgoslingsTA`), Taverner's cackling goose (\textit{Branta hutchinsii taverneri}) `r n.CACGadultsTA` (`r n.CACGgoslingsTA`), greater white-fronted goose (\textit{Anser albifrons frontalis}) `r n.GWFGadultsTA` (`r n.GWFGgoslingsTA`), and lesser snow goose (\textit{Anser caerulescens caerulescens}) `r n.SNGOadultsTA` (`r n.SNGOgoslingsTA`). Species composition of adult geese within the Traditional Survey Area was: Pacific black brant (`r n.percBLBRadTA`%), Taverner's cackling goose (`r n.percCACGadTA`%), greater white-fronted goose (`r n.percGWFGadTA`%), and lesser snow goose (`r n.percSNGOadTA`%). 
+
+\textbf{KEY WORDS: }aerial survey, Alaska, \textit{Anser albifrons frontalis}, \textit{Anser caerulescens caerulescens}, \textit{Branta bernicla nigricans}, \textit{Branta hutchinsii taverneri}, greater white-fronted goose, lesser snow goose, molting geese, National Petroleum Reserve-Alaska, NPR-A, Pacific black brant, Taverner's cackling goose, Teshekpuk Lake.
+
+<!--This line inserts the report completion date with current month, Year taken from the computer clock-->
+\hfill\textit {`r format(Sys.Date(),"%B %Y")`}
+
+\textbf{INTRODUCTION}\break
+The significance of the Teshekpuk Lake area to molting geese was first documented by Henry (Hank) Hansen and Jim King in 1957 (King 1970), and the importance of the area as goose molting habitat was affirmed by the Secretary of Interior in 1977 with the establishment of the Teshekpuk Lake Special Area (TLSA) within the larger National Petroleum Reserve-Alaska (Fig. 1). Within the TLSA, the Bureau of Land Management (BLM) identified the area north and east of Teshekpuk Lake as a biologically sensitive Goose Molting Area (U.S. BLM 2008; Fig. 1). In addition, recognizing the international significance of the region to migratory waterbirds, a portion of this area was selected in 2017 as a Flyway Network Site (Jaensch 2013) by the East Asian-Australasian Flyway Partnership (\textcolor{blue}{http://www.eaaflyway.net/}). The documented importance of the Teshekpuk Lake area to molting geese has been one of the primary justifications for protecting the TLSA from oil and gas leasing (U.S. BLM 2008, 2013). From 1998 to 2008, no leasing was considered in the TLSA, in part, because of the sensitivity to disturbance of molting geese using the area. In 2008, a Record of Decision by BLM stated the area was intended for leasing, but only after a 10-yr delay (U.S. BLM 2008). Under that scenario, lease sales would have been allowed starting in 2018. However, in 2013, a new Record of Decision returned the status of most of the TLSA to no leasing, with a concurrent moratorium on construction of non-safety related infrastructure (U.S. BLM 2013). Accordingly, the 2013 Record of Decision by the BLM also changed the status of the Cape Simpson and Piasuk River Delta areas to no leasing, although infrastructure will be allowed (U.S. BLM 2013). In November 2019, BLM released the Draft NPRA Integrated Activity Plan EIS (\textcolor{blue}{https://eplanning.blm.gov/epl-front-office/eplanning/planAndProjectSite.do?methodName=dispatchToPatternPage \&currentPageId=174096}) consistent with Secretarial Order 3352, which was signed in June 2017. The order calls for the review and development of a revised IAP "that strikes an appropriate balance of promoting development while protecting surface resources"(\textcolor{blue}{https://www.blm.gov/planning-and-nepa/plans-in-development/alaska/npr-a-iap-eis}). 
+
+Initial waterfowl surveys in the Teshekpuk Lake area were conducted by the U.S. Fish and Wildlife Service (USFWS) from 1976-78. Following these surveys and a 3-year hiatus (i.e., 1979-1981), the survey has been conducted annually since 1982. The long-term survey area is referred to as the Traditional Survey Area (Fig. 1). In 2010, 5 additional locations were identified as important molting areas as a result of studies conducted by the U.S. Geological Survey (USGS) Alaska Science Center (ASC)(Flint et al. 2008, Lewis et al. 2009). Based on this research and in an effort to specifically monitor brant abundance and use of areas outside of the Traditional Survey Area, these 5 new areas were preliminarily surveyed in 2010; however, only 4 of these areas were permanently added to the overall TLSA survey area after the initial 2010 surveys (Mallek 2011)(Figure 1).
+
+The primary goal of the molting goose survey is to monitor the abundance and distribution of 4 species of geese (i.e., Pacific black brant [\textit{Branta bernicla nigricans}], Taverner's cackling goose [\textit{Branta hutchinsii taverneri}], greater white-fronted goose [\textit{Anser albifrons frontalis}], and lesser snow goose [\textit{Anser caerulescens caerulescens}]) during their flightless wing molt in the area north and east of Teshekpuk Lake. Specific objectives include: 1) acquiring annual minimum counts and locations of adult geese and goslings, 2) documenting relative species composition, 3) measuring annual local production, and 4) obtaining counts and locations of loons (i.e., Pacific [\textit{Gavia pacifica}], red-throated [\textit{Gavia stellata}], and yellow-billed [\textit{Gavia adamsii}]) and tundra swans (\textit{Cygnus columbianus}). A secondary goal of the survey is to detect regional shifts in distribution by periodically monitoring numbers of molting geese in 4 additional areas between Cape Simpson and the Colville River Delta (Fig. 1).  
+
+\begin{figure}[ht]
+\includegraphics{tlsa_mgarea.png}
+\caption{Molting goose survey areas and BLM land status designations near Teshekpuk Lake, Alaska.}
+\end{figure}
+
+\textbf{STUDY AREA}\hfill\break
+\textbf{Traditional Survey Area}\hfill\break
+The Traditional Survey Area encompasses approximately 2,000 km$^{2}$ and includes 209 lakes, bays, and shoreline/creek segments north and east of Teshekpuk Lake (Fig. 1). Each lake or water body is identified by a unique number, and observations are recorded separately for each of these survey units (Fig. 2). Prior to 2005, there were 197 numbered survey units; however, additional lakes, creeks, and shorelines were also surveyed within the Traditional Survey Area, but these data were reported with geographic descriptions of the areas surveyed and did not correspond to uniquely numbered survey units. In 2005, these additional lakes and shoreline/creek segments were uniquely numbered and the total number of survey units increased from 197 to 209 without a corresponding increase in the total area searched. In addition, between 2005 and 2014, some shoreline segments were completed sporadically (e.g., 202, 203, 204, and 205). 
+
+\textbf{Additional Survey Areas}\hfill\break
+In 2010, 5 areas were delineated as survey units at Atigaru Point, Cape Simpson, the Colville River Delta, North Kogru River, and the Piasuk River Delta (Fig. 1). The Atigaru Point survey area encompasses approximately 98 km$^{2}$ and includes the lakes and shoreline near the point and the offshore Eskimo Islands. The Cape Simpson survey area was delineated into 16 lake, wetland, and estuary survey units spread over 158 km$^{2}$. The Colville River Delta survey area covers lakes, river channels, and estuaries across 188 km$^{2}$ of the northwest portion of the river delta. The Piasuk River Delta survey area includes 6 discrete lakes and river estuaries covering approximately 98 km$^{2}$. The North Kogru River area was approximately 78 km$^{2}$ and overlaid portions of existing survey units 204 and 205 that were established in 2005. Because most of this area already occurred within the boundaries of the Traditional Survey Area (i.e., 204 and 205), the North Kogu area counts are no longer reported as separate counts. As a result, there are only 4 additional areas that are periodically surveyed. Since 2010, Cape Simpson and the Piasuk River Delta, (i.e., the areas with the highest abundance of molting brant) have been surveyed annually with the exception of 2018. The Atigaru and Colville River Delta areas are surveyed every 5 years.
+
+\begin{figure}[ht]
+\includegraphics{Tesh_traditionalarea.jpg}
+\caption{Molting goose survey units within the Traditional Survey Area.}
+\end{figure}
+
+\newpage
+\textbf{METHODS}\break
+The `r c.year` survey was flown in two amphibious-equipped Cessna 206 aircraft (N9623R and N721NR). Optimum survey altitude and airspeed was 60-90 meters (200-300 feet) above ground level and 80-100 knots (90-115 mph). Observations were collected by both the pilot and right-front seat observer in each aircraft. Geese in small groups were individually counted whereas larger flock sizes were estimated. The goal was to obtain complete coverage of each survey unit within the survey area. Lake size and wind conditions determined optimum flight paths to achieve this goal. For smaller lakes, we navigated a flight path near or over the lake that provided a complete view of the lake and shoreline. Flight paths for larger lakes included a complete shoreline route followed by transects to cover the surface area of the lake. Flight lines for shoreline and creek segments were flown to give the observer the best view of the entire segment. 
+We used program RECORD (Hodges 2001, USFWS unpublished report) operating on tablet computers (i.e., Panasonic Toughpad FZ-M1\texttrademark) to record observations. Observations were voice recorded by each observer using a handheld microphone and stored as audio files (i.e., .WAV format). Each observation was automatically linked to geographic coordinates on the GPS equipped tablet computer. The aircraft flight path was also stored by the program. Observations of adult and hatching year geese, swans, and loons were recorded for each unit. Survey units were located using images displayed on an Apple Ipad\texttrademark\ within the Foreflight\texttrademark\ App, a handheld GPS, or a paper map with a satellite image of the area and the numbered survey units.
+A second computer program, TRANSCRIBE (Hodges 2001, USFWS unpublished report) was used to replay audio files and convert the recorded data to text files via keyboard characters coded by species and age class. TRANSCRIBE assigns geographic coordinates to each observation when the data are transcribed and yields a comma delimited text file for each day. Text files are uploaded to spreadsheets for summary analysis and spatial data (e.g., flight lines) are uploaded to a geodatabase.
+
+
+\setlength{\parskip}{4ex}
+\textbf{RESULTS}\newline
+Survey flights were conducted on `r strftime(unique(dat2006_2019$RDate[dat2006_2019$Year==as.numeric(c.year)]), "%d")` July with: pilot-observer B. Shults and observer T. Zeller (N721NR) and pilot-observer H. Wilson and observer D. Marks (N9623R) (Fig. 3). Total flight time for both aircraft to complete the survey from a start in Anchorage, a base of operations in Deadhorse, and a return flight to Anchorage was 60.1 hrs. We completed 208 of the 209 sample units within the Traditional Survey Area during 15.8 hrs of survey time. All additional areas were surveyed in 5.7 hrs of flight time. We observed `r n.total.cy` geese (`r n.adultsall.cy` adults and `r n.goslingsall.cy` goslings) within all survey areas.  Species composition of adult geese observed was: Pacific black brant (`r n.percBLBRad`%), Taverner's cackling goose (`r n.percCACGad`%), greater white-fronted goose (`r n.percGWFGad`%), and lesser snow goose (`r n.percSNGOad`%).
+
+\begin{figure}[H]
+\includegraphics[height=12cm]{Tesh_flightlines_2019.png}
+\centering
+\caption{Molting goose survey flight lines, 18-19 and 22 July 2019.}
+\end{figure}
+
+\textbf{Traditional Survey Area}\newline
+Within the Traditional Survey Area, we recorded `r n.obsgeeseTA` observations totaling `r n.adultsTA+n.goslingsTA` geese (`r n.adultsTA` adults and `r n.goslingsTA` goslings). The pilot and observer recorded `r n.LFobspercTA`% and `r n.RFobspercTA`% of the observations, respectively. Relative abundance of adult geese counted within each survey unit varied across the survey area (Fig. 4). Species composition and age-class (i.e., adult vs. gosling) of geese counted was: Pacific black brant (`r n.percBLBRadTA`%) [`r n.BLBRadultsTA` adults and `r n.BLBRgoslingsTA` goslings], greater white-fronted goose (`r n.percGWFGadTA`%) [`r n.GWFGadultsTA` adults and `r n.GWFGgoslingsTA` goslings], Taverner's cackling goose (`r n.percCACGadTA`%) (`r n.CACGadultsTA` adults and `r n.CACGgoslingsTA` goslings), and lesser snow goose (`r n.percSNGOad`%) [`r n.SNGOadultsTA` adults and `r n.SNGOgoslingsTA` goslings]. Observations of tundra swans totaled `r n.TUSWadTA` adults and `r n.TUSWjuvTA` cygnets. Pacific loon, red-throated loon, and yellow-billed loon totals were `r n.PALOTA`, `r n.RTLOTA`, and `r n.YBLOTA`, respectively. Total counts of geese, loons, and swans within each survey unit in the Traditional Survey Area are provided in Table 1. The number of adult geese by species counted from 1976-2019 in the Traditional Survey Area are presented in Table 2 and Figure 4.
+
+\textbf{Additional Survey Areas}\newline
+The Atigaru Point, Cape Simpson, Colville River Delta, and Piasuk River areas were surveyed on 22 July. We recorded `r n.obsgeeseAA` observations totaling `r n.adultAA.cy + n.goslingsAA.cy` geese (`r n.adultAA.cy` adults and `r n.goslingsAA.cy` goslings). Species composition of adults was `r n.percBLBRadAA`% Pacific black brant, `r n.percGWFGadAA`% greater white-fronted goose, `r n.percSNGOadAA`% lesser snow goose, and `r n.percCACGadAA`% Taverner's cackling geese. Observations of tundra swans totaled `r n.TUSWad-n.TUSWadTA` adults and `r n.TUSWjuv-n.TUSWjuvTA` cygnets. Pacific loon, red-throated loon, and yellow-billed loon totals were `r n.PALO-n.PALOTA`, `r n.RTLO-n.RTLOTA`, and `r n.YBLO-n.YBLOTA`, respectively. Summary data (2010-2019) for the additional areas are provided in Table 3.
+
+```{r MakeNAs_function}
+#This function adds a row to the dataframe for years/species with NA values;used for the line graph later
+MakeNAs=function(sp.by.year){
+
+  year.list=c(1979,1980,1981)
+  sp.list=c("BLBR", "CACG", "GWFG", "SNGO")
+
+  for (i in 1:length(sp.list)){
+    for (j in 1:length(year.list)){
+      
+
+      if(any(as.character(sp.by.year$Spp2)==sp.list[i] & as.character(sp.by.year$Year)==year.list[j]))
+      {next}
+
+      {
+        new.row=c(year.list[j], sp.list[i],NA)
+      sp.by.year=rbind(sp.by.year,new.row)
+      }
+      }
+
+  }
+  sp.by.year$Count2=as.numeric(sp.by.year$Count2)
+  return(sp.by.year)
+
+}
+```
+```{r Figure_5, include=FALSE}
+#ggplot2 line graph of adult numbers 1976-current year
+library(ggplot2)
+fig.dat<-filter(tab_76_19.melt, tab_76_19.melt$Spp2 %in%c("BLBR","CACG","GWFG","SNGO"))
+fig.dat<-MakeNAs(fig.dat)
+ggplot(data=fig.dat, aes(x=as.numeric(Year), y=fig.dat$Count2, group=fig.dat$Spp2))+
+  theme_classic(base_size = 11, base_family = "serif")+
+  # geom_line(linetype="solid")
+  geom_line(aes(color=fig.dat$Spp2))+
+  geom_point(aes(color=fig.dat$Spp2))+
+  theme(plot.title=element_text(hjust = 0.5, family="serif"))+
+  labs(y="Number of Molting Adults", x="Year", family="serif")+
+  labs(color="")+
+  theme(legend.position = "top")+
+    scale_y_continuous(limits = c(0,50000))+
+  scale_x_continuous(limits = c(1976,2019),breaks = seq(1976,2019,1))+
+  theme(axis.text.x = element_text(size=8,angle = -75, vjust = 0.5))+
+  theme(axis.line = element_line(linetype = "solid"))
+ggsave("figure5.png", device="png", width = 6.5, height=4, units = "in")
+```
+```{r Table2_Objects}
+#Table summaries for all TRADITIONAL area only
+#5 year (2015-2019)mean counts for TRADITIONAL by species, age
+mean.count <- aggregate(Count2~Area+Spp2+Age, data=sum.count_06_19, subset = sum.count_06_19$Year>2015 & Area=="TRADITIONAL", FUN=mean)
+```
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{figure5.png}
+\caption{Total adult geese counted by species,
+1976-2019, Teshekpuk Lake Traditional Area.} 
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[ht]{0.85\textwidth}
+\includegraphics[width=1\linewidth]{Figure_4_2019.png}
+\end{subfigure}
+\begin{subfigure}[ht]{0.85\textwidth}
+\includegraphics[width=1\linewidth]{Figure_4_2018.png}
+\end{subfigure}
+\caption{Relative abundance of geese during 2019 and 2018 within the Traditional Survey Area.}
+\end{figure}
+
+\textbf{DISCUSSION}\newline
+Survey flights began 2 days later than the mean start date of recent surveys (i.e., 16 July [2003-2018]), and the survey ended 3 days later than the mean end date (i.e., 19 July) for the same period. Very few geese were observed flying, and therefore major movements of geese from one survey unit to another during the survey period were unlikely. Given the documented advance in overall phenology and earlier arrival dates of goose species on the Arctic Coastal Plain (Ward et al. 2015), subsequent molting surveys should begin on or before the mean start date to reduce bias as a result of post-molt movement.
+
+Long-term survey data and previous research studies show that the TLSA is important molting habitat not only for brant, but also for Taverner's cackling, greater white-fronted, and lesser snow geese. These survey data are crucial to monitor molting habitat use and to evaluate changes in abundance and distribution as a result of habitat changes that may be caused by climate change or future resource development.
+
+\textbf{ACKNOWLEDGEMENTS}\newline
+We recognize Hank Hanson and Jim King (both USFWS-retired) for first documenting the importance of the Teshekpuk Lake area to waterfowl and Rod King (USFWS-MBM Fairbanks retired; 1982-1999) and Ed Mallek (USFWS-MBM Fairbanks; 2000-2013) and their observers for collecting the majority of historical data. We thank the Kanuti NWR and National Park Service staff for providing housing, office, and aircraft support in Bettles. Funding for this survey was provided by the BLM. This document was produced using knitr (\textcolor{blue}{https://yihui.name/knitr/}) from RStudio (\textcolor{blue}{https://www.rstudio.com/}). Full report code, including R (\textcolor{blue}{https://www.r-project.org/}) and MiKTeX
+(\textcolor{blue}{https://miktex.org/}) is available at GitHub (\textcolor{blue}{https://github.com/bsshults/Teshekpuk-Lake-Molt}).
+\newline
+\textit{\small{The findings and conclusions in this report are those of the authors and do not necessarily represent the views of the U.S. Fish and Wildlife Service.}}
+
+\textbf{REFERENCES}
+
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{1ex}
+
+Flint, P.L., E.J. Mallek, R.J. King, A. Schmutz, K.S. Bollinger, and D.V. Derksen. 2008. Changes in abundance and spatial distribution of geese molting near Teshekpuk Lake, Alaska: interspecific competition or ecological change? Polar Biology 31:549-556.
+
+Hodges, J. 2001. Voice/GPS Survey Program Manual. Unpublished Report. U. S. Fish and Wildlife Service, Juneau, Alaska.
+
+Jaensch, R. 2013. new tools for the development of the Flyway Site Network: an integrated and updated list of candidate sites and guidance on prioritization. Report to Partnership for the East Asian-Australasian Flyway.
+
+King J.G. 1970. The swans and geese of Alaska's arctic slope. Wildfowl 21:11-17.
+
+Lewis, T.L., P.L. Flint, J.A. Schmutz, and D.V. Derksen. 2009. Temporal distributions and patterns of habitat use by black brant molting in the Teshekpuk Lake Special Area, Alaska. U.S. Geological Survey, Alaska Science Center, Anchorage, Alaska. 124pp.
+
+Mallek, E.J. 2011.  Teshekpuk Lake Molting Goose Survey - 2010. Unpublished Report. U.S. Fish and Wildlife Service, Fairbanks, Alaska. 16pp.
+
+U.S. BLM. 2008. Northeast National Petroleum Reserve-Alaska supplemental integrated activity plan, Record of Decision. U.S. Department of the Interior, Bureau of Land Management, Anchorage, Alaska. 99pp.
+
+U.S. BLM. 2013. Northeast National Petroleum Reserve-Alaska integrated activity plan, Record of Decision. U.S. Department of the Interior, Bureau of Land Management, Anchorage, Alaska. 106pp.
+
+Ward, D. H., J. Helmericks, J.W. Hupp, L. McManus, M. Budde, D. C. Douglas, and K. D. Tape. 2015. Multi-decadal trends in spring arrival of avian migrants to the central Arctic coast of Alaska: effects of environmental and ecological factors. Journal of Avian Biology 46: 1-11.
+\newpage
+\footnotesize
+
+```{r Table 1_Current_Year}
+#create summary table for TRADITIONAL area data for all species for current year only
+#temporarily remove the NA values to get 209 rows instead of 210 (i.e. 209 lakes plus NA)
+table1_temp <-filter(dat2006_2019,dat2006_2019$Lake2!="NA")
+# Number of rows=209 for traditional area lakes
+n.rows = length(unique(table1_temp$Lake2, na.rm=TRUE))
+n.species <-by(dat2006_2019$Count2, list(dat2006_2019$Year, dat2006_2019$Lake2, dat2006_2019$Spp2Age), sum,  na.rm = TRUE)
+n.species <- as.data.frame(n.species[c.year,,])
+n.species[is.na(n.species)]<-""
+n.speciesord<- (n.species[,c(1,2,3,4,5,6,9,10,7,8,13,11,12)])
+unit = as.numeric(unique(table1_temp$Lake2[table1_temp$Area=="TRADITIONAL"]))
+sum.row <-c(n.BLBRadultsTA,n.BLBRgoslingsTA,n.CACGadultsTA, n.CACGgoslingsTA, n.GWFGadultsTA,n.GWFGgoslingsTA, n.SNGOadultsTA, n.SNGOgoslingsTA, n.PALOTA, n.RTLOTA,n.YBLOTA,n.TUSWadTA,n.TUSWjuvTA)
+table1 <- data.frame(
+  "Unit" = unit[order(unit)], n.speciesord)
+table1=rbind(table1[order(table1$Unit),], c("Total", sum.row))
+colnames(table1) <- c("Unit", "BLBR", "BLBRG", "CACG", "CACGG", "GWFG", "GWFGG", "SNGO", "SNGOG", "PALO", "RTLO", "YBLO", "TUSW", "TUSWC")
+row.names(table1) <- NULL
+```
+```{r Kable_Table_1_Current_Year}
+library(knitr)
+library(kableExtra)
+t1 <- (table1)
+options(knitr.table.format = "latex")
+kable(t1,format="latex",booktabs=TRUE,longtable=T,align = "r",caption="Number of geese, swans, and loons observed in the Traditional Survey Area, 18-22 July 2019. BLBR = brant, BLBRG = brant  gosling, CACG = Taverner's cackling goose, CACGG = Taverner's cackling goose gosling, GWFG = white-fronted goose, GWFGG = white-fronted goose gosling, PALO = Pacific loon, RTLO = red-thoated loon, SNGO = snow goose, SNGOG = snow goose gosling, TUSW = tundra swan, TUSWC = tundra swan cygnet, YBLO = yellow-billed loon. Yellow highlight denotes lakes that were not surveyed.")%>%
+kable_styling(latex_options = "striped",stripe_color="lightgray", position = "left")%>%
+kable_styling(latex_options = "repeat_header",repeat_header_method = c("replace"),repeat_header_text = "\\textit{(Continued)}")%>%
+kable_styling(font_size = 7)%>%
+#highlights the missing lakes in "yellow"
+row_spec(33,background = "yellow")%>%
+#bold text for summary row
+row_spec(210,bold = T,background = "cyan")
+```
+
+```{r Kable_76_19}
+#creates the summary table for 76_19
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "latex")
+#column names character vector
+col.headers <- c("Year","BLBR", "CACG", "GWFG", "SNGO","BLBR", "CACG", "GWFG", "SNGO")
+kable(tab_76_19, format = "latex", booktabs = T, format.args=list(big.mark=","),col.names=col.headers, caption = "Summary of geese counted in the Teshekpuk Lake Traditional Survey Area, 1976-2019.")%>%
+add_header_above(c("","Adults"=4,"Goslings"=4)) %>% 
+kable_styling(position = "center")%>%
+row_spec(42,bold = T,background = "cyan")%>%
+#Table footnote for 2018 where 66 lakes (32%) not surveyed
+footnote(general = "2018: 66 Lakes (32%) not surveyed.")
+```
+```{r}
+#Create the additional areas table
+tab3.years<-with(areasall_sort,areasall_sort[order(areasall_sort$Area,areasall_sort$Spp2,areasall_sort$Age,areasall_sort$Year),])
+tab3.years_sort <- tab3.years[order (tab3.years$Year,tab3.years$Area,tab3.years$Spp2,tab3.years$Age),]
+table3 <- data.frame(
+  "BLBR" =tab3.years$Count2[tab3.years$Spp2=="BLBR"& tab3.years$Age=="ad"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "CACG" =tab3.years$Count2[tab3.years$Spp2=="CACG"& tab3.years$Age=="ad"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "GWFG" =tab3.years$Count2[tab3.years$Spp2=="GWFG"& tab3.years$Age=="ad"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "SNGO" =tab3.years$Count2[tab3.years$Spp2=="SNGO"& tab3.years$Age=="ad"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "BLBRG" =tab3.years$Count2[tab3.years$Spp2=="BLBR"& tab3.years$Age=="ju"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "CACGG" =tab3.years$Count2[tab3.years$Spp2=="CACG"& tab3.years$Age=="ju"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "GWFGG" =tab3.years$Count2[tab3.years$Spp2=="GWFG"& tab3.years$Age=="ju"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")],
+  "SNGOG" =tab3.years$Count2[tab3.years$Spp2=="SNGO"& tab3.years$Age=="ju"& tab3.years$Area%in%c("ATIGARU","COLVILLE","KOGRU","PIASUK","SIMPSON")])
+ 
+colnames(table3) <- c("BLBR", "CACG","GWFG","SNGO","BLBR","CACG","GWFG","SNGO")
+row.names(table3) <- NULL
+#Create the Year Column
+year_column <- data.frame(YEAR=c("2010","2019","2010","2015","2019","2010","2010","2011","2012","2013","2014","2015","2016","2017","2019","2010","2011","2012","2013","2014","2015","2016","2017","2019"))
+#Bind the Year column to the table
+table3_bind <- cbind(year_column,table3)
+```
+<!--This Latex code moves the table to the top of the page when it is the last page and the table is short and floats to center of page.-->
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+<!------------------------------------------------------------------------------------------------->
+```{r Kable_Table3_output}
+library(knitr)
+library(kableExtra)
+t3 <- (table3_bind)
+options(knitr.table.format = "latex")
+kable(t3,format="latex",booktabs = T, format.args=list(big.mark=","),caption = "Summary of geese counted in the additional survey areas, 2010-2019.")%>%
+#kable_styling(latex_options = "striped",stripe_index = c(1:2,6,8,18:26)) %>%
+add_header_above(c("", "Adults"=4,"Goslings"=4)) %>%
+pack_rows("Atigaru Point",1,2) %>%
+pack_rows("Colville River Delta",3,5) %>%
+pack_rows("Kogru River",6,6) %>% 
+pack_rows("Piasuk River Delta",7,15) %>%  
+pack_rows("Cape Simpson",16,24)%>%
+add_indent(c(1:2))%>%
+  add_indent(c(1:2))%>%
+    add_indent(c(1:2))%>%
+add_indent(c(3:5))%>%
+    add_indent(c(3:5))%>%
+      add_indent(c(3:5))%>%
+add_indent(c(6))%>%
+    add_indent(c(6))%>%
+      add_indent(c(6))%>%
+add_indent(c(7:15))%>%
+    add_indent(c(7:15))%>%
+      add_indent(c(7:15))%>%
+add_indent(c(16:24))%>%
+    add_indent(c(16:24))%>%
+      add_indent(c(16:24))
+```
+```{r total adult geese/lake for Arcgis Figure 4 Current Year, eval=FALSE}
+library(dplyr)
+#Selects 2019 adult goose data for only lakes in TRADITIONAL AREA
+lakesums_2019<- subset(dat2006_2019,dat2006_2019$Spp2Age %in% c("BLBR", "GWFG", "CACG","SNGO") & dat2006_2019$Year==2019 & dat2006_2019$Area=="TRADITIONAL")
+#Sums total adult geese for each lake
+total_geese_by_lake <- aggregate(formula=Count2~Lake2, FUN=sum, data=lakesums_2019, na.rm=TRUE)
+#Creates dataframe for lakes with no data and fills in with -9 as a missing value
+notsurveyed_2019 <- data.frame(unsurveyed19)
+notsurveyed_2019$Count2 <- -9
+#rename the unsurvey variable to "Lake2" for bind
+colnames(notsurveyed_2019) <- c("unsurveyed"="Lake2","Count2"="Count2")
+
+# find the zero goose lakes
+withgeese <- unique(lakesums_2019$Lake2)
+notandsurveyed <- union (withgeese,unsurveyed19)
+zero_lakes <- all[!all %in% notandsurveyed]
+zero_lakes <- as.data.frame(zero_lakes)
+colnames(zero_lakes) <- c("zero_lakes"="Lake2")
+zero_lakes$Count2 <- 0
+
+#bind 3 files together for export to .csv for ArcGis
+fig4file_bind <- rbind(notsurveyed_2019,zero_lakes,total_geese_by_lake)
+#omit the NAs from file
+fig4file <- na.omit(fig4file)
+write.csv(fig4file, file ="C:/Users/bshults/Documents/Teshekpuk/2016/R Files/fig4_2019.csv" )
+```
+```{r Missing_Lakes_By_Year_2006_2019}
+#This function creates a list of lakes that are missing from each year's data file; missing may be an unsurveyed lake or a zero observations lake if no start/end was recorded for the lake if it was a zero (e.g. 2016 and 2017)
+FindMissingLakes=function(data){
+  data= data.frame("Year"=data$Year,"Lake2"=data$Lake2)
+  data= data[complete.cases(data),]
+  
+     year.list=c(2006:2019)
+ lake.list=c(1:209)
+ missing_lakes <- data.frame("YEAR"=NA,"LAKE"=NA)
+  
+ for (i in 1:length(year.list)){
+    for (j in 1:length(lake.list)){
+      
+
+      if(any((data$Year)==year.list[i] & (data$Lake2)==lake.list[j]))
+      {next}
+
+      {
+        missing.row=c(year.list[i],lake.list[j])
+        
+      missing_lakes=rbind(missing_lakes,missing.row)
+      }
+      }
+ }
+  return(missing_lakes)
+ }
+ NoDataLakes06_19<- FindMissingLakes(dat2006_2019)     
+```
+```{r Import_Track_Files,eval=FALSE}
+library(data.table)
+#Shults (1NR)Data (3 files by day)
+dat071819_1NR <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Track_Files/2019/BShults/TR071819")
+dat071919_1NR <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Track_Files/2019/BShults/TR071919")
+dat072219_1NR<- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Track_Files/2019/BShults/TR072219")
+#Bind BSS files
+dat_1NR <- rbind(dat071819_1NR, dat071919_1NR,dat072219_1NR)
+colnames(dat_1NR) <- c("Latitude", "Longitude", "Time")
+#Wilson (23R) data (3 files by day)
+dat071819_23R <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Track_Files/2019/HWilson/TR071819")
+dat071919_23R <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Track_Files/2019/HWilson/TR071919")
+dat072219_23R <- fread("K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Track_Files/2019/HWilson/TR072219")
+#Bind BSS files
+dat_23R <- rbind(dat071819_23R, dat071919_23R,dat072219_23R)
+colnames(dat_23R) <- c("Latitude", "Longitude", "Time")
+```
+
+
+```{r Write_Master_Files, eval=FALSE}
+#2006-2019 data file 
+write.csv(dat2006_2019,file = "K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/TMG_Data_2006_2019.csv",quote = F)
+#1976-2005 dat file
+write.csv(dat76_05,file = "K:/Waterfowl/TMG_Survey/Data/Raw_Survey_Data/Observer_Transcribed_Data/TMG_Data_1976_2005.csv",quote = F)
+
+```

@@ -1,0 +1,885 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{tikz}
+\usepackage{float}
+\usepackage[printwatermark]{xwatermark}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{justification= raggedright, singlelinecheck = false, labelsep=period}
+\usepackage{booktabs}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{pdflscape}
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+\setlength{\parskip}{4ex}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+\author{}
+\date{\vspace{-2.5em}}
+%This defines a blank page after the title so text begins on front of page and not on back of title page and skips numbering the blank page
+\def\blankpage{%
+	\clearpage%
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\null%
+	\clearpage}
+\begin{document}
+%This is the Title Page
+	\thispagestyle{empty}
+	\newgeometry{margin=2pc}
+	\includegraphics[height=4pc, keepaspectratio]{doiemblem.jpg}
+	\hspace{1pt}
+	\includegraphics[height=4pc, keepaspectratio]{fws.png}
+	\hspace{4.28cm}
+	\raisebox{33pt}[0pt][0pt]{ %
+		\begin{minipage}[t]{25.5pc}
+			\colorbox{black}{
+				\parbox[l]{25.5pc}{
+					\vspace{8pt}
+					\color{white}{\usefont{T1}{phv}{b}{n} \fontsize{14}{\baselineskip}\selectfont U.S.~Fish \& Wildlife Service \hfill}
+			}}\\[1pc]
+			{\usefont{T1}{phv}{b}{n}\fontsize{21}{2\baselineskip}\selectfont \makebox[4in][l]{Abundance and Distribution}\\[5pt] \makebox[4in][l]{of Molting Geese in the vicinity}\\\makebox[4in][l]{of Teshekpuk Lake, Alaska} \\\makebox[4in][l]{July 2019}\\[1pc]}
+			{\usefont{T1}{cmr}{m}{it}\fontsize{18}{\baselineskip} \selectfont{February 2020}}
+	\end{minipage}} \\[2in]
+	
+	% Maximum graphics dimensions width= 500px ,height= 500px
+	\vspace{1.75in}
+	\begin{center}		
+		\includegraphics[width=500px]{IMG_3522.JPG}
+	\end{center}
+%This next command creates the blank page on the back of title sheet
+\blankpage
+%This restores page formatting
+\restoregeometry
+\pagestyle{fancy}
+\fancyfoot[R]{\scriptsize USFWS, MBM-Teshekpuk Lake Molting Goose Survey, 2019}
+\renewcommand{\footrulewidth}{1pt}
+\renewcommand{\headrulewidth}{0pt}
+
+\large
+
+\textbf{Abundance and Distribution of Molting Geese in the vicinity of Teshekpuk Lake, Alaska, July 2019}
+\hfill
+
+\large
+
+\textbf{Brad S. Shults}, \textbf{Tamara K. Zeller},
+\textbf{Heather M. Wilson}, and \textbf{Dennis K. Marks}.\newline U.S.
+Fish and Wildlife Service, Migratory Bird Management, 1011 E. Tudor Rd.,
+Anchorage, AK 99503
+
+\textbf{ABSTRACT}: This report summarizes the 38th annual, aerial survey
+of molting geese conducted near Teshekpuk Lake on the Arctic Coastal
+Plain of Alaska (ACP). The survey was conducted between 18 and 22 July
+utilizing two amphibious-equipped Cessna 206 aircraft (N9623R and
+N721NR). We observed 153,373 geese (115,812 adults and 37,561 goslings).
+Species composition of adult geese observed was: Pacific black brant
+(29\%), Taverner's cackling goose (18\%), greater white-fronted goose
+(42\%), and lesser snow goose (21\%). Within the Teshekpuk Lake
+Traditional Survey Area, we recorded 3,800 observations totaling 98,584
+geese (76,592 adults and 21,992 goslings). Total counts of adults and
+(goslings) in the Traditional Survey Area by species were: Pacific black
+brant (\textit{Branta bernicla nigricans}) 18,932 (777), Taverner's
+cackling goose (\textit{Branta hutchinsii taverneri}) 17,470 (331),
+greater white-fronted goose (\textit{Anser albifrons frontalis}) 32,975
+(17,080), and lesser snow goose
+(\textit{Anser caerulescens caerulescens}) 7,215 (3,804). Species
+composition of adult geese within the Traditional Survey Area was:
+Pacific black brant (25\%), Taverner's cackling goose (23\%), greater
+white-fronted goose (43\%), and lesser snow goose (9\%).
+
+\textbf{KEY WORDS: }aerial survey, Alaska,
+\textit{Anser albifrons frontalis},
+\textit{Anser caerulescens caerulescens},
+\textit{Branta bernicla nigricans},
+\textit{Branta hutchinsii taverneri}, greater white-fronted goose,
+lesser snow goose, molting geese, National Petroleum Reserve-Alaska,
+NPR-A, Pacific black brant, Taverner's cackling goose, Teshekpuk Lake.
+
+\hfill\textit {February 2020}
+
+\textbf{INTRODUCTION}\break The significance of the Teshekpuk Lake area
+to molting geese was first documented by Henry (Hank) Hansen and Jim
+King in 1957 (King 1970), and the importance of the area as goose
+molting habitat was affirmed by the Secretary of Interior in 1977 with
+the establishment of the Teshekpuk Lake Special Area (TLSA) within the
+larger National Petroleum Reserve-Alaska (Fig. 1). Within the TLSA, the
+Bureau of Land Management (BLM) identified the area north and east of
+Teshekpuk Lake as a biologically sensitive Goose Molting Area (U.S. BLM
+2008; Fig. 1). In addition, recognizing the international significance
+of the region to migratory waterbirds, a portion of this area was
+selected in 2017 as a Flyway Network Site (Jaensch 2013) by the East
+Asian-Australasian Flyway Partnership
+(\textcolor{blue}{http://www.eaaflyway.net/}). The documented importance
+of the Teshekpuk Lake area to molting geese has been one of the primary
+justifications for protecting the TLSA from oil and gas leasing (U.S.
+BLM 2008, 2013). From 1998 to 2008, no leasing was considered in the
+TLSA, in part, because of the sensitivity to disturbance of molting
+geese using the area. In 2008, a Record of Decision by BLM stated the
+area was intended for leasing, but only after a 10-yr delay (U.S. BLM
+2008). Under that scenario, lease sales would have been allowed starting
+in 2018. However, in 2013, a new Record of Decision returned the status
+of most of the TLSA to no leasing, with a concurrent moratorium on
+construction of non-safety related infrastructure (U.S. BLM 2013).
+Accordingly, the 2013 Record of Decision by the BLM also changed the
+status of the Cape Simpson and Piasuk River Delta areas to no leasing,
+although infrastructure will be allowed (U.S. BLM 2013). In November
+2019, BLM released the Draft NPRA Integrated Activity Plan EIS
+(\textcolor{blue}{https://eplanning.blm.gov/epl-front-office/eplanning/planAndProjectSite.do?methodName=dispatchToPatternPage \&currentPageId=174096})
+consistent with Secretarial Order 3352, which was signed in June 2017.
+The order calls for the review and development of a revised IAP ``that
+strikes an appropriate balance of promoting development while protecting
+surface
+resources''(\textcolor{blue}{https://www.blm.gov/planning-and-nepa/plans-in-development/alaska/npr-a-iap-eis}).
+
+Initial waterfowl surveys in the Teshekpuk Lake area were conducted by
+the U.S. Fish and Wildlife Service (USFWS) from 1976-78. Following these
+surveys and a 3-year hiatus (i.e., 1979-1981), the survey has been
+conducted annually since 1982. The long-term survey area is referred to
+as the Traditional Survey Area (Fig. 1). In 2010, 5 additional locations
+were identified as important molting areas as a result of studies
+conducted by the U.S. Geological Survey (USGS) Alaska Science Center
+(ASC)(Flint et al.~2008, Lewis et al.~2009). Based on this research and
+in an effort to specifically monitor brant abundance and use of areas
+outside of the Traditional Survey Area, these 5 new areas were
+preliminarily surveyed in 2010; however, only 4 of these areas were
+permanently added to the overall TLSA survey area after the initial 2010
+surveys (Mallek 2011)(Figure 1).
+
+The primary goal of the molting goose survey is to monitor the abundance
+and distribution of 4 species of geese (i.e., Pacific black brant
+{[}\textit{Branta bernicla nigricans}{]}, Taverner's cackling goose
+{[}\textit{Branta hutchinsii taverneri}{]}, greater white-fronted goose
+{[}\textit{Anser albifrons frontalis}{]}, and lesser snow goose
+{[}\textit{Anser caerulescens caerulescens}{]}) during their flightless
+wing molt in the area north and east of Teshekpuk Lake. Specific
+objectives include: 1) acquiring annual minimum counts and locations of
+adult geese and goslings, 2) documenting relative species composition,
+3) measuring annual local production, and 4) obtaining counts and
+locations of loons (i.e., Pacific {[}\textit{Gavia pacifica}{]},
+red-throated {[}\textit{Gavia stellata}{]}, and yellow-billed
+{[}\textit{Gavia adamsii}{]}) and tundra swans
+(\textit{Cygnus columbianus}). A secondary goal of the survey is to
+detect regional shifts in distribution by periodically monitoring
+numbers of molting geese in 4 additional areas between Cape Simpson and
+the Colville River Delta (Fig. 1).
+
+\begin{figure}[ht]
+\includegraphics{tlsa_mgarea.png}
+\caption{Molting goose survey areas and BLM land status designations near Teshekpuk Lake, Alaska.}
+\end{figure}
+
+\textbf{STUDY AREA}\hfill\break
+\textbf{Traditional Survey Area}\hfill\break The Traditional Survey Area
+encompasses approximately 2,000 km\(^{2}\) and includes 209 lakes, bays,
+and shoreline/creek segments north and east of Teshekpuk Lake (Fig. 1).
+Each lake or water body is identified by a unique number, and
+observations are recorded separately for each of these survey units
+(Fig. 2). Prior to 2005, there were 197 numbered survey units; however,
+additional lakes, creeks, and shorelines were also surveyed within the
+Traditional Survey Area, but these data were reported with geographic
+descriptions of the areas surveyed and did not correspond to uniquely
+numbered survey units. In 2005, these additional lakes and
+shoreline/creek segments were uniquely numbered and the total number of
+survey units increased from 197 to 209 without a corresponding increase
+in the total area searched. In addition, between 2005 and 2014, some
+shoreline segments were completed sporadically (e.g., 202, 203, 204, and
+205).
+
+\textbf{Additional Survey Areas}\hfill\break In 2010, 5 areas were
+delineated as survey units at Atigaru Point, Cape Simpson, the Colville
+River Delta, North Kogru River, and the Piasuk River Delta (Fig. 1). The
+Atigaru Point survey area encompasses approximately 98 km\(^{2}\) and
+includes the lakes and shoreline near the point and the offshore Eskimo
+Islands. The Cape Simpson survey area was delineated into 16 lake,
+wetland, and estuary survey units spread over 158 km\(^{2}\). The
+Colville River Delta survey area covers lakes, river channels, and
+estuaries across 188 km\(^{2}\) of the northwest portion of the river
+delta. The Piasuk River Delta survey area includes 6 discrete lakes and
+river estuaries covering approximately 98 km\(^{2}\). The North Kogru
+River area was approximately 78 km\(^{2}\) and overlaid portions of
+existing survey units 204 and 205 that were established in 2005. Because
+most of this area already occurred within the boundaries of the
+Traditional Survey Area (i.e., 204 and 205), the North Kogu area counts
+are no longer reported as separate counts. As a result, there are only 4
+additional areas that are periodically surveyed. Since 2010, Cape
+Simpson and the Piasuk River Delta, (i.e., the areas with the highest
+abundance of molting brant) have been surveyed annually with the
+exception of 2018. The Atigaru and Colville River Delta areas are
+surveyed every 5 years.
+
+\begin{figure}[ht]
+\includegraphics{Tesh_traditionalarea.jpg}
+\caption{Molting goose survey units within the Traditional Survey Area.}
+\end{figure}
+
+\newpage
+
+\textbf{METHODS}\break The 2019 survey was flown in two
+amphibious-equipped Cessna 206 aircraft (N9623R and N721NR). Optimum
+survey altitude and airspeed was 60-90 meters (200-300 feet) above
+ground level and 80-100 knots (90-115 mph). Observations were collected
+by both the pilot and right-front seat observer in each aircraft. Geese
+in small groups were individually counted whereas larger flock sizes
+were estimated. The goal was to obtain complete coverage of each survey
+unit within the survey area. Lake size and wind conditions determined
+optimum flight paths to achieve this goal. For smaller lakes, we
+navigated a flight path near or over the lake that provided a complete
+view of the lake and shoreline. Flight paths for larger lakes included a
+complete shoreline route followed by transects to cover the surface area
+of the lake. Flight lines for shoreline and creek segments were flown to
+give the observer the best view of the entire segment. We used program
+RECORD (Hodges 2001, USFWS unpublished report) operating on tablet
+computers (i.e., Panasonic Toughpad FZ-M1\texttrademark) to record
+observations. Observations were voice recorded by each observer using a
+handheld microphone and stored as audio files (i.e., .WAV format). Each
+observation was automatically linked to geographic coordinates on the
+GPS equipped tablet computer. The aircraft flight path was also stored
+by the program. Observations of adult and hatching year geese, swans,
+and loons were recorded for each unit. Survey units were located using
+images displayed on an Apple Ipad\texttrademark~within the
+Foreflight\texttrademark~App, a handheld GPS, or a paper map with a
+satellite image of the area and the numbered survey units. A second
+computer program, TRANSCRIBE (Hodges 2001, USFWS unpublished report) was
+used to replay audio files and convert the recorded data to text files
+via keyboard characters coded by species and age class. TRANSCRIBE
+assigns geographic coordinates to each observation when the data are
+transcribed and yields a comma delimited text file for each day. Text
+files are uploaded to spreadsheets for summary analysis and spatial data
+(e.g., flight lines) are uploaded to a geodatabase.
+
+\setlength{\parskip}{4ex}
+
+\textbf{RESULTS}\newline Survey flights were conducted on 181922 July
+with: pilot-observer B. Shults and observer T. Zeller (N721NR) and
+pilot-observer H. Wilson and observer D. Marks (N9623R) (Fig. 3). Total
+flight time for both aircraft to complete the survey from a start in
+Anchorage, a base of operations in Deadhorse, and a return flight to
+Anchorage was 60.1 hrs. We completed 208 of the 209 sample units within
+the Traditional Survey Area during 15.8 hrs of survey time. All
+additional areas were surveyed in 5.7 hrs of flight time. We observed
+153,373 geese (115,812 adults and 37,561 goslings) within all survey
+areas. Species composition of adult geese observed was: Pacific black
+brant (29\%), Taverner's cackling goose (18\%), greater white-fronted
+goose (42\%), and lesser snow goose (21\%).
+
+\begin{figure}[H]
+\includegraphics[height=12cm]{Tesh_flightlines_2019.png}
+\centering
+\caption{Molting goose survey flight lines, 18-19 and 22 July 2019.}
+\end{figure}
+
+\textbf{Traditional Survey Area}\newline Within the Traditional Survey
+Area, we recorded 3,800 observations totaling 98,584 geese (76,592
+adults and 21,992 goslings). The pilot and observer recorded 46\% and
+54\% of the observations, respectively. Relative abundance of adult
+geese counted within each survey unit varied across the survey area
+(Fig. 4). Species composition and age-class (i.e., adult vs.~gosling) of
+geese counted was: Pacific black brant (25\%) {[}18,932 adults and 777
+goslings{]}, greater white-fronted goose (43\%) {[}32,975 adults and
+17,080 goslings{]}, Taverner's cackling goose (23\%) (17,470 adults and
+331 goslings), and lesser snow goose (21\%) {[}7,215 adults and 3,804
+goslings{]}. Observations of tundra swans totaled 214 adults and 67
+cygnets. Pacific loon, red-throated loon, and yellow-billed loon totals
+were 161, 32, and 15, respectively. Total counts of geese, loons, and
+swans within each survey unit in the Traditional Survey Area are
+provided in Table 1. The number of adult geese by species counted from
+1976-2019 in the Traditional Survey Area are presented in Table 2 and
+Figure 4.
+
+\textbf{Additional Survey Areas}\newline The Atigaru Point, Cape
+Simpson, Colville River Delta, and Piasuk River areas were surveyed on
+22 July. We recorded 1,845 observations totaling 54,789 geese (39,220
+adults and 15,569 goslings). Species composition of adults was 29\%
+Pacific black brant, 30\% greater white-fronted goose, 37\% lesser snow
+goose, and 4\% Taverner's cackling geese. Observations of tundra swans
+totaled 105 adults and 38 cygnets. Pacific loon, red-throated loon, and
+yellow-billed loon totals were 38, 12, and 7, respectively. Summary data
+(2010-2019) for the additional areas are provided in Table 3.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{figure5.png}
+\caption{Total adult geese counted by species,
+1976-2019, Teshekpuk Lake Traditional Area.} 
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[ht]{0.85\textwidth}
+\includegraphics[width=1\linewidth]{Figure_4_2019.png}
+\end{subfigure}
+\begin{subfigure}[ht]{0.85\textwidth}
+\includegraphics[width=1\linewidth]{Figure_4_2018.png}
+\end{subfigure}
+\caption{Relative abundance of geese during 2019 and 2018 within the Traditional Survey Area.}
+\end{figure}
+
+\textbf{DISCUSSION}\newline Survey flights began 2 days later than the
+mean start date of recent surveys (i.e., 16 July {[}2003-2018{]}), and
+the survey ended 3 days later than the mean end date (i.e., 19 July) for
+the same period. Very few geese were observed flying, and therefore
+major movements of geese from one survey unit to another during the
+survey period were unlikely. Given the documented advance in overall
+phenology and earlier arrival dates of goose species on the Arctic
+Coastal Plain (Ward et al.~2015), subsequent molting surveys should
+begin on or before the mean start date to reduce bias as a result of
+post-molt movement.
+
+Long-term survey data and previous research studies show that the TLSA
+is important molting habitat not only for brant, but also for Taverner's
+cackling, greater white-fronted, and lesser snow geese. These survey
+data are crucial to monitor molting habitat use and to evaluate changes
+in abundance and distribution as a result of habitat changes that may be
+caused by climate change or future resource development.
+
+\textbf{ACKNOWLEDGEMENTS}\newline We recognize Hank Hanson and Jim King
+(both USFWS-retired) for first documenting the importance of the
+Teshekpuk Lake area to waterfowl and Rod King (USFWS-MBM Fairbanks
+retired; 1982-1999) and Ed Mallek (USFWS-MBM Fairbanks; 2000-2013) and
+their observers for collecting the majority of historical data. We thank
+the Kanuti NWR and National Park Service staff for providing housing,
+office, and aircraft support in Bettles. Funding for this survey was
+provided by the BLM. This document was produced using knitr
+(\textcolor{blue}{https://yihui.name/knitr/}) from RStudio
+(\textcolor{blue}{https://www.rstudio.com/}). Full report code,
+including R (\textcolor{blue}{https://www.r-project.org/}) and MiKTeX
+(\textcolor{blue}{https://miktex.org/}) is available at GitHub
+(\textcolor{blue}{https://github.com/bsshults/Teshekpuk-Lake-Molt}).
+\newline
+\textit{\small{The findings and conclusions in this report are those of the authors and do not necessarily represent the views of the U.S. Fish and Wildlife Service.}}
+
+\textbf{REFERENCES}
+
+\setlength{\parindent}{-0.2in}
+\setlength{\leftskip}{0.2in}
+\setlength{\parskip}{1ex}
+
+Flint, P.L., E.J. Mallek, R.J. King, A. Schmutz, K.S. Bollinger, and
+D.V. Derksen. 2008. Changes in abundance and spatial distribution of
+geese molting near Teshekpuk Lake, Alaska: interspecific competition or
+ecological change? Polar Biology 31:549-556.
+
+Hodges, J. 2001. Voice/GPS Survey Program Manual. Unpublished Report. U.
+S. Fish and Wildlife Service, Juneau, Alaska.
+
+Jaensch, R. 2013. new tools for the development of the Flyway Site
+Network: an integrated and updated list of candidate sites and guidance
+on prioritization. Report to Partnership for the East Asian-Australasian
+Flyway.
+
+King J.G. 1970. The swans and geese of Alaska's arctic slope. Wildfowl
+21:11-17.
+
+Lewis, T.L., P.L. Flint, J.A. Schmutz, and D.V. Derksen. 2009. Temporal
+distributions and patterns of habitat use by black brant molting in the
+Teshekpuk Lake Special Area, Alaska. U.S. Geological Survey, Alaska
+Science Center, Anchorage, Alaska. 124pp.
+
+Mallek, E.J. 2011. Teshekpuk Lake Molting Goose Survey - 2010.
+Unpublished Report. U.S. Fish and Wildlife Service, Fairbanks, Alaska.
+16pp.
+
+U.S. BLM. 2008. Northeast National Petroleum Reserve-Alaska supplemental
+integrated activity plan, Record of Decision. U.S. Department of the
+Interior, Bureau of Land Management, Anchorage, Alaska. 99pp.
+
+U.S. BLM. 2013. Northeast National Petroleum Reserve-Alaska integrated
+activity plan, Record of Decision. U.S. Department of the Interior,
+Bureau of Land Management, Anchorage, Alaska. 106pp.
+
+Ward, D. H., J. Helmericks, J.W. Hupp, L. McManus, M. Budde, D. C.
+Douglas, and K. D. Tape. 2015. Multi-decadal trends in spring arrival of
+avian migrants to the central Arctic coast of Alaska: effects of
+environmental and ecological factors. Journal of Avian Biology 46: 1-11.
+\newpage \footnotesize
+
+\begingroup\fontsize{7}{9}\selectfont
+
+\begin{longtable}[l]{rrrrrrrrrrrrrr}
+\caption{\label{tab:Kable_Table_1_Current_Year}Number of geese, swans, and loons observed in the Traditional Survey Area, 18-22 July 2019. BLBR = brant, BLBRG = brant  gosling, CACG = Taverner's cackling goose, CACGG = Taverner's cackling goose gosling, GWFG = white-fronted goose, GWFGG = white-fronted goose gosling, PALO = Pacific loon, RTLO = red-thoated loon, SNGO = snow goose, SNGOG = snow goose gosling, TUSW = tundra swan, TUSWC = tundra swan cygnet, YBLO = yellow-billed loon. Yellow highlight denotes lakes that were not surveyed.}\\
+\toprule
+Unit & BLBR & BLBRG & CACG & CACGG & GWFG & GWFGG & SNGO & SNGOG & PALO & RTLO & YBLO & TUSW & TUSWC\\
+\midrule
+\endfirsthead
+\caption[]{\textit{(Continued)}}\\
+\toprule
+Unit & BLBR & BLBRG & CACG & CACGG & GWFG & GWFGG & SNGO & SNGOG & PALO & RTLO & YBLO & TUSW & TUSWC\\
+\midrule
+\endhead
+\
+\endfoot
+\bottomrule
+\endlastfoot
+\rowcolor{lightgray}  1 &  &  & 2 & 1 & 69 &  &  &  &  &  & 7 & 85 & 109\\
+2 &  &  &  &  & 129 & 54 &  &  &  &  & 7 & 299 & 287\\
+\rowcolor{lightgray}  3 & 90 &  & 3 & 8 & 247 & 104 &  &  & 1 &  & 5 & 107 & 192\\
+4 & 25 &  &  &  & 182 & 94 &  &  &  &  & 1 & 314 & 240\\
+\rowcolor{lightgray}  5 &  &  & 20 &  & 136 & 19 &  &  &  &  & 2 & 215 & 186\\
+\addlinespace
+6 &  &  & 2 & 4 & 4 & 11 &  &  & 7 &  & 2 & 263 & 231\\
+\rowcolor{lightgray}  7 & 40 &  & 6 & 4 & 292 & 13 &  &  & 2 &  & 5 & 305 & 129\\
+8 & 264 & 33 &  &  & 340 & 24 &  &  & 7 &  & 3 & 106 & 29\\
+\rowcolor{lightgray}  9 & 37 & 1 & 20 &  & 92 & 108 &  &  &  &  & 3 & 54 & 39\\
+10 &  &  &  &  &  &  &  &  & 2 &  &  & 150 & 90\\
+\addlinespace
+\rowcolor{lightgray}  11 &  &  &  &  & 75 &  &  &  & 2 &  &  & 175 & 100\\
+12 &  &  &  &  &  &  &  &  &  &  & 2 &  & \\
+\rowcolor{lightgray}  13 &  &  &  &  & 17 & 7 &  &  & 2 &  &  &  & \\
+14 &  &  &  &  & 6 & 8 &  &  & 4 &  & 1 & 6 & 12\\
+\rowcolor{lightgray}  15 &  &  & 50 &  & 60 & 13 &  &  &  &  &  & 16 & 7\\
+\addlinespace
+16 &  &  &  &  &  &  &  &  &  &  &  & 1173 & 1182\\
+\rowcolor{lightgray}  17 &  &  &  &  & 164 & 145 &  &  & 2 &  &  &  & \\
+18 &  &  & 120 &  & 51 & 5 &  &  &  &  &  & 25 & \\
+\rowcolor{lightgray}  19 &  &  &  &  & 50 & 87 & 1 &  & 2 &  &  &  & \\
+20 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  21 &  &  & 200 &  & 944 & 616 &  &  &  &  &  & 228 & 134\\
+22 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  23 &  &  &  &  & 8 & 10 &  &  &  &  & 8 & 10 & 15\\
+24 &  &  &  &  & 106 & 42 &  &  &  &  & 1 &  & \\
+\rowcolor{lightgray}  25 &  &  & 15 & 1 & 169 & 122 &  &  &  &  & 5 & 46 & 34\\
+\addlinespace
+26 &  &  &  &  & 22 & 9 &  &  & 1 &  & 3 &  & \\
+\rowcolor{lightgray}  27 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+28 &  &  & 15 &  & 118 & 48 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  29 &  &  &  &  & 95 & 35 &  &  &  &  & 1 &  & \\
+30 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  31 &  &  &  &  & 12 & 25 &  &  &  &  &  &  & \\
+32 &  &  &  &  & 40 &  &  &  & 1 &  &  &  & \\
+\rowcolor{lightgray}  \rowcolor{yellow}  33 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+34 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  35 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+36 &  &  & 45 &  & 62 & 98 &  &  &  &  & 2 & 14 & 14\\
+\rowcolor{lightgray}  37 &  &  &  &  & 54 & 22 &  &  & 3 &  &  &  & \\
+38 &  &  & 465 &  & 214 & 209 &  &  &  &  &  & 64 & 28\\
+\rowcolor{lightgray}  39 &  &  & 47 &  & 140 & 65 &  &  &  &  &  & 4 & 7\\
+40 & 4 & 3 & 40 &  & 46 & 59 &  &  & 5 &  & 1 & 8 & \\
+\addlinespace
+\rowcolor{lightgray}  41 &  &  &  &  & 2 & 1 &  &  &  &  &  &  & \\
+42 &  &  & 12 &  &  &  &  &  &  &  &  & 10 & 3\\
+\rowcolor{lightgray}  43 &  &  &  &  & 11 & 10 &  &  & 3 &  &  &  & \\
+44 &  &  & 55 &  & 204 & 236 &  &  &  &  &  & 12 & 7\\
+\rowcolor{lightgray}  45 &  &  &  &  & 30 & 45 &  &  &  &  &  &  & \\
+\addlinespace
+46 &  &  & 75 &  & 12 & 15 &  &  &  &  &  & 25 & 4\\
+\rowcolor{lightgray}  47 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+48 & 2 & 2 & 312 &  & 546 & 181 & 1 &  &  &  &  & 141 & 8\\
+\rowcolor{lightgray}  49 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+50 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  51 &  &  & 150 &  & 80 & 40 &  &  &  &  & 1 & 3 & \\
+52 & 1255 & 30 & 1533 &  & 1700 & 1416 &  &  &  &  & 4 & 120 & 280\\
+\rowcolor{lightgray}  53 & 1677 & 94 & 427 &  & 252 & 296 &  &  &  &  &  & 145 & 280\\
+54 &  &  & 15 &  & 278 & 274 & 2 &  &  &  & 2 &  & \\
+\rowcolor{lightgray}  55 & 1160 & 15 & 680 &  & 441 & 253 &  &  &  &  &  &  & \\
+\addlinespace
+56 &  &  & 30 &  & 70 &  &  &  & 2 &  & 2 &  & \\
+\rowcolor{lightgray}  57 &  &  & 196 &  & 886 & 220 &  &  &  &  &  & 20 & \\
+58 &  &  &  &  &  &  &  &  &  &  & 2 &  & \\
+\rowcolor{lightgray}  59 &  &  &  &  & 45 &  &  &  &  &  & 5 & 39 & \\
+60 &  &  & 60 &  & 40 &  &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  61 & 90 &  &  &  & 214 & 73 & 2 &  & 3 &  & 3 &  & \\
+62 & 150 &  & 876 & 48 & 1370 & 555 &  &  & 5 &  &  & 92 & 125\\
+\rowcolor{lightgray}  63 &  &  &  &  & 76 & 104 &  &  &  &  &  &  & \\
+64 &  &  &  &  &  &  & 2 &  & 1 &  & 6 &  & \\
+\rowcolor{lightgray}  65 &  &  & 3 &  & 44 & 74 &  &  &  &  &  & 4 & \\
+\addlinespace
+66 &  &  &  &  & 277 & 180 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  67 & 4 & 8 & 24 &  & 302 & 124 &  &  &  &  &  & 10 & 16\\
+68 &  &  &  &  & 2 & 4 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  69 &  &  &  &  & 14 & 14 &  &  & 2 &  &  &  & \\
+70 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  71 &  &  &  &  & 5 & 10 &  &  &  &  & 2 &  & \\
+72 &  &  & 60 &  & 377 & 140 &  &  &  &  &  & 10 & 15\\
+\rowcolor{lightgray}  73 &  &  &  &  & 44 & 66 &  &  &  &  &  &  & \\
+74 &  &  & 241 & 5 & 183 & 142 &  &  & 3 &  &  & 180 & 35\\
+\rowcolor{lightgray}  75 &  &  &  &  & 53 & 34 &  &  & 2 &  & 4 &  & \\
+\addlinespace
+76 &  &  &  &  &  &  &  &  & 5 &  & 4 &  & \\
+\rowcolor{lightgray}  77 &  &  &  &  & 42 & 8 & 1 &  & 11 &  & 2 &  & \\
+78 &  &  &  &  & 219 & 263 &  &  & 3 &  & 19 &  & \\
+\rowcolor{lightgray}  79 &  &  &  &  &  &  &  &  & 3 &  & 4 &  & \\
+80 &  &  &  &  & 287 & 160 &  &  &  &  & 2 &  & \\
+\addlinespace
+\rowcolor{lightgray}  81 &  &  &  &  & 125 & 10 & 1 &  &  &  & 5 &  & \\
+82 &  &  &  &  & 4 & 9 &  &  &  &  & 4 &  & \\
+\rowcolor{lightgray}  83 &  &  & 25 &  & 224 & 62 &  &  &  &  & 3 &  & \\
+84 &  &  &  &  &  &  &  &  &  &  & 2 &  & \\
+\rowcolor{lightgray}  85 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+86 &  &  &  &  &  &  &  &  & 3 &  &  &  & \\
+\rowcolor{lightgray}  87 &  &  & 231 & 5 & 700 & 160 &  &  &  &  & 6 & 267 & 145\\
+88 &  &  &  &  &  &  &  &  & 2 &  &  & 4 & 10\\
+\rowcolor{lightgray}  89 &  &  &  &  &  &  &  &  & 1 &  &  &  & \\
+90 &  &  &  &  & 65 &  &  &  &  &  & 4 & 9 & 3\\
+\addlinespace
+\rowcolor{lightgray}  91 &  &  &  &  & 244 & 7 &  &  & 3 &  &  &  & \\
+92 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  93 &  &  &  &  & 5 & 12 &  &  & 1 &  &  &  & \\
+94 &  &  &  &  & 1 &  &  &  & 7 &  & 4 & 2 & 2\\
+\rowcolor{lightgray}  95 &  &  & 335 & 4 & 502 & 294 &  &  &  &  &  & 84 & 63\\
+\addlinespace
+96 &  &  & 75 &  & 45 & 22 &  &  &  &  &  & 11 & \\
+\rowcolor{lightgray}  97 &  &  & 10 &  & 14 & 70 &  &  &  &  & 2 & 52 & 70\\
+98 &  &  & 6 &  & 206 & 24 &  &  &  &  &  & 30 & \\
+\rowcolor{lightgray}  99 & 65 &  & 730 & 10 & 1025 & 172 &  &  & 7 &  & 4 & 15 & \\
+100 &  &  & 12 &  &  &  &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  101 & 15 &  & 95 &  & 153 & 112 &  &  &  &  & 4 & 6 & \\
+102 &  &  & 30 &  & 216 &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  103 &  &  & 5 &  & 360 & 11 & 1 &  & 2 &  & 3 & 2 & 6\\
+104 &  &  & 275 & 22 & 297 & 3 & 1 &  &  &  &  & 60 & \\
+\rowcolor{lightgray}  105 & 2 &  & 15 &  & 251 & 4 &  &  &  &  &  &  & \\
+\addlinespace
+106 & 397 &  & 1091 & 4 & 663 & 48 &  &  &  &  &  & 95 & \\
+\rowcolor{lightgray}  107 & 140 &  & 402 &  & 182 & 27 &  &  & 1 &  &  & 2 & \\
+108 & 20 &  & 50 &  &  &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  109 &  &  & 18 &  & 100 &  &  &  &  &  &  & 45 & \\
+110 & 2 & 2 & 430 &  & 780 & 124 &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  111 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+112 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  113 & 545 &  & 162 &  & 449 & 117 &  &  &  &  & 2 & 160 & 20\\
+114 &  &  & 15 & 7 & 2 &  &  &  &  &  & 1 &  & \\
+\rowcolor{lightgray}  115 & 22 & 44 & 251 & 4 & 102 & 240 &  &  &  &  &  & 3 & 6\\
+\addlinespace
+116 & 1353 & 80 & 845 & 15 & 146 & 177 &  &  & 1 &  &  & 100 & 95\\
+\rowcolor{lightgray}  117 & 310 &  & 300 & 25 & 20 & 50 &  &  & 1 &  &  & 35 & 40\\
+118 & 1817 & 30 & 680 &  & 60 & 60 &  &  &  &  &  & 113 & 67\\
+\rowcolor{lightgray}  119 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+120 &  &  &  &  & 4 & 10 &  &  & 2 &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  121 & 385 & 125 &  &  &  &  & 1 &  & 2 &  &  & 20 & 30\\
+122 & 15 &  & 30 &  & 546 & 135 &  &  & 1 &  &  &  & \\
+\rowcolor{lightgray}  123 & 1106 &  & 455 &  & 177 & 175 &  &  & 1 &  &  &  & \\
+124 &  &  & 29 &  & 104 & 76 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  125 & 35 &  & 195 &  & 932 & 252 &  &  &  &  & 2 &  & \\
+\addlinespace
+126 &  &  &  &  &  &  &  &  & 3 &  &  &  & \\
+\rowcolor{lightgray}  127 &  &  & 18 &  & 226 & 373 &  &  & 2 &  &  &  & \\
+128 &  &  &  &  & 30 & 50 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  129 &  &  &  &  & 74 & 55 &  &  &  &  &  &  & \\
+130 &  &  &  &  &  &  & 2 &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  131 &  &  &  &  &  &  & 1 &  & 2 &  &  &  & \\
+132 & 70 &  &  &  & 225 & 291 &  &  &  &  &  & 14 & 12\\
+\rowcolor{lightgray}  133 &  &  &  &  & 90 & 195 &  &  &  &  &  &  & \\
+134 &  &  &  &  & 20 & 50 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  135 &  &  &  &  & 30 &  &  &  &  &  &  &  & \\
+\addlinespace
+136 &  &  &  &  & 14 & 23 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  137 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+138 &  &  &  &  & 4 &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  139 &  &  & 100 &  & 66 & 8 &  &  &  &  &  &  & \\
+140 &  &  &  &  & 125 & 4 &  &  &  &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  141 &  &  & 178 & 22 & 342 & 170 &  &  &  &  &  & 10 & 7\\
+142 &  &  & 126 & 4 & 253 & 37 &  &  &  &  & 1 & 3 & 4\\
+\rowcolor{lightgray}  143 & 2 & 3 & 245 & 6 & 24 & 42 &  &  &  &  & 1 &  & \\
+144 &  &  & 207 & 49 & 28 & 80 &  &  & 2 &  &  &  & \\
+\rowcolor{lightgray}  145 & 264 & 25 & 210 &  & 1455 & 600 &  &  & 4 &  & 5 & 145 & \\
+\addlinespace
+146 & 11 &  &  &  & 166 & 88 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  147 &  &  & 15 &  & 185 & 49 &  &  &  &  &  &  & \\
+148 & 9 & 15 &  &  & 63 & 20 &  &  &  &  & 1 &  & \\
+\rowcolor{lightgray}  149 & 3545 &  & 55 &  & 625 & 479 &  &  &  &  & 3 & 1224 & 148\\
+150 & 170 &  & 10 &  & 173 & 185 &  &  & 2 &  & 5 & 93 & \\
+\addlinespace
+\rowcolor{lightgray}  151 &  &  &  &  & 80 &  &  &  &  &  & 1 &  & \\
+152 &  &  &  &  & 11 &  & 1 &  &  &  &  & 3 & 2\\
+\rowcolor{lightgray}  153 &  &  &  &  & 94 & 64 &  &  &  &  & 2 &  & \\
+154 &  &  &  &  &  &  &  &  & 2 &  & 2 &  & \\
+\rowcolor{lightgray}  155 &  &  &  &  & 25 &  &  &  & 1 &  & 1 &  & \\
+\addlinespace
+156 &  &  &  &  & 16 & 32 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  157 &  &  &  &  & 42 & 48 &  &  &  &  &  & 15 & 8\\
+158 &  &  &  &  &  &  &  &  &  &  & 2 &  & \\
+\rowcolor{lightgray}  159 &  &  &  &  & 191 & 40 &  &  &  &  & 2 & 15 & 15\\
+160 &  &  & 2 &  & 112 & 135 &  &  & 3 &  & 4 &  & \\
+\addlinespace
+\rowcolor{lightgray}  161 &  &  & 392 & 20 & 372 & 25 &  &  &  &  & 2 & 10 & 6\\
+162 & 380 &  & 146 &  & 24 &  &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  163 &  &  &  &  &  &  &  &  & 2 &  & 4 &  & \\
+164 &  &  &  &  &  &  &  &  & 3 &  &  &  & \\
+\rowcolor{lightgray}  165 &  &  &  &  &  &  &  &  &  &  &  & 7 & 12\\
+\addlinespace
+166 & 40 & 80 &  &  & 10 & 25 &  &  &  &  & 2 & 10 & 17\\
+\rowcolor{lightgray}  167 & 4 & 5 & 20 & 40 & 173 & 297 &  &  & 1 &  & 5 &  & \\
+168 &  &  &  &  & 20 & 50 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  169 &  &  &  &  & 26 & 52 &  &  & 2 &  & 2 &  & \\
+170 & 210 & 20 & 10 &  & 435 & 52 &  &  & 6 &  &  & 92 & 91\\
+\addlinespace
+\rowcolor{lightgray}  171 & 40 &  &  &  & 180 & 78 &  &  &  &  & 2 &  & \\
+172 &  &  & 60 &  & 210 & 32 &  &  & 2 &  & 1 & 21 & \\
+\rowcolor{lightgray}  173 & 70 & 50 & 95 & 10 & 140 & 66 &  &  & 1 &  &  &  & \\
+174 &  &  &  &  &  &  &  &  &  &  & 1 &  & \\
+\rowcolor{lightgray}  175 & 145 &  & 60 &  & 484 & 204 &  &  & 5 &  & 2 &  & \\
+\addlinespace
+176 &  &  & 92 &  & 397 & 194 &  &  &  &  & 1 &  & \\
+\rowcolor{lightgray}  177 &  &  & 6 & 3 & 136 & 15 &  &  &  &  & 4 &  & \\
+178 &  &  & 4 & 8 & 3 & 3 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  179 &  &  &  &  & 10 & 20 &  &  &  &  &  &  & \\
+180 & 80 &  & 10 &  & 142 & 28 &  &  &  &  & 1 & 2 & \\
+\addlinespace
+\rowcolor{lightgray}  181 & 90 &  & 128 &  &  &  &  &  &  &  &  &  & \\
+182 & 380 &  & 37 &  & 38 & 37 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  183 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+184 & 20 &  & 36 &  & 279 & 83 &  &  &  &  & 2 &  & \\
+\rowcolor{lightgray}  185 & 15 &  & 15 &  & 52 & 87 &  &  &  &  &  &  & \\
+\addlinespace
+186 & 565 &  & 50 &  & 10 &  & 6 &  &  &  &  &  & \\
+\rowcolor{lightgray}  187 & 7 &  & 17 &  & 145 & 100 &  &  &  &  &  &  & \\
+188 &  &  &  &  & 75 & 30 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  189 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+190 & 6 &  & 30 &  & 183 & 88 &  &  & 1 &  &  &  & \\
+\addlinespace
+\rowcolor{lightgray}  191 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+192 &  &  & 494 &  & 40 & 26 &  &  &  &  &  &  & \\
+\rowcolor{lightgray}  193 & 115 & 32 &  &  & 489 & 203 &  &  &  &  &  & 13 & 15\\
+194 &  &  &  &  & 260 & 122 &  &  & 2 &  &  &  & \\
+\rowcolor{lightgray}  195 &  &  &  &  & 19 & 30 &  &  &  &  &  &  & \\
+\addlinespace
+196 &  &  &  &  &  &  & 2 &  &  &  &  &  & \\
+\rowcolor{lightgray}  197 & 26 &  &  &  & 184 & 59 &  &  &  &  &  &  & \\
+198 & 357 &  & 625 &  & 373 & 346 &  &  &  &  &  & 60 & 20\\
+\rowcolor{lightgray}  199 &  &  &  &  & 5 & 5 & 7 &  &  &  &  & 148 & 65\\
+200 & 283 & 28 & 50 &  & 211 & 56 &  &  &  &  &  & 299 & \\
+\addlinespace
+\rowcolor{lightgray}  201 &  &  & 10 &  & 135 & 95 &  &  &  &  &  &  & \\
+202 & 195 &  & 470 &  & 616 & 653 &  &  &  &  & 1 & 54 & 16\\
+\rowcolor{lightgray}  203 & 50 &  & 187 & 2 & 527 & 238 &  &  &  &  &  & 2 & 4\\
+204 & 1113 & 34 & 431 &  & 973 & 712 &  &  &  &  &  & 504 & 116\\
+\rowcolor{lightgray}  205 & 40 & 30 & 109 & 6 & 927 & 536 &  &  &  &  & 3 & 196 & 143\\
+\addlinespace
+206 & 45 & 10 & 145 &  & 102 & 49 &  &  &  &  & 2 & 466 & 231\\
+\rowcolor{lightgray}  207 & 10 & 8 &  & 10 & 48 & 2 &  &  &  &  & 3 & 88 & 20\\
+208 &  &  & 30 &  & 186 & 40 &  &  & 2 &  & 1 & 179 & 69\\
+\rowcolor{lightgray}  209 &  &  &  &  &  &  &  &  &  &  &  &  & \\
+\rowcolor{cyan}  \textbf{Total} & \textbf{18932} & \textbf{777} & \textbf{17470} & \textbf{331} & \textbf{32975} & \textbf{17080} & \textbf{7215} & \textbf{3804} & \textbf{161} & \textbf{32} & \textbf{15} & \textbf{214} & \textbf{67}\\*
+\end{longtable}
+\endgroup{}
+
+\begin{table}
+
+\caption{\label{tab:Kable_76_19}Summary of geese counted in the Teshekpuk Lake Traditional Survey Area, 1976-2019.}
+\centering
+\begin{tabular}[t]{lrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{Adults} & \multicolumn{4}{c}{Goslings} \\
+\cmidrule(l{3pt}r{3pt}){2-5} \cmidrule(l{3pt}r{3pt}){6-9}
+Year & BLBR & CACG & GWFG & SNGO & BLBR & CACG & GWFG & SNGO\\
+\midrule
+1976 & 13,998 & 12,026 & 4,791 & 715 & 37 & 11 & 23 & 0\\
+1977 & 21,988 & 11,946 & 2,428 & 259 & 0 & 0 & 11 & 0\\
+1978 & 32,732 & 14,388 & 1,943 & 87 & 5 & 2 & 5 & 0\\
+1982 & 12,956 & 10,440 & 995 & 81 & 30 & 0 & 65 & 3\\
+1983 & 24,597 & 20,033 & 2,897 & 172 & 2 & 0 & 30 & 0\\
+\addlinespace
+1984 & 26,990 & 26,674 & 4,151 & 256 & 45 & 7 & 24 & 0\\
+1985 & 15,259 & 11,252 & 1,951 & 123 & 0 & 4 & 18 & 20\\
+1986 & 19,102 & 8,089 & 3,352 & 419 & 0 & 0 & 6 & 0\\
+1987 & 8,069 & 8,586 & 2,822 & 134 & 0 & 0 & 15 & 0\\
+1988 & 8,604 & 8,405 & 1,368 & 150 & 125 & 0 & 42 & 0\\
+\addlinespace
+1989 & 13,324 & 16,139 & 3,100 & 232 & 14 & 1 & 15 & 0\\
+1990 & 23,055 & 12,233 & 6,142 & 88 & 340 & 0 & 488 & 66\\
+1991 & 12,429 & 5,408 & 6,150 & 251 & 145 & 0 & 725 & 133\\
+1992 & 14,899 & 14,777 & 11,147 & 257 & 54 & 20 & 73 & 0\\
+1993 & 20,762 & 6,797 & 8,613 & 243 & 410 & 0 & 0 & 0\\
+\addlinespace
+1994 & 20,246 & 13,829 & 13,746 & 299 & 0 & 0 & 0 & 0\\
+1995 & 18,931 & 16,089 & 9,532 & 164 & 63 & 0 & 370 & 34\\
+1996 & 23,430 & 16,922 & 27,549 & 281 & 45 & 50 & 206 & 46\\
+1997 & 21,059 & 9,091 & 17,967 & 786 & 0 & 0 & 0 & 0\\
+1998 & 12,048 & 5,466 & 13,540 & 667 & 68 & 50 & 319 & 145\\
+\addlinespace
+1999 & 10,956 & 1,859 & 25,700 & 1,290 & 20 & 4 & 125 & 175\\
+2000 & 3,368 & 8,897 & 9,869 & 310 & 0 & 10 & 273 & 34\\
+2001 & 37,867 & 18,301 & 33,781 & 2,678 & 5 & 18 & 1,462 & 57\\
+2002 & 17,334 & 13,855 & 35,171 & 1,369 & 50 & 18 & 816 & 89\\
+2003 & 21,017 & 15,240 & 21,432 & 1,218 & 165 & 65 & 3,729 & 178\\
+\addlinespace
+2004 & 20,122 & 13,426 & 30,161 & 2,365 & 0 & 0 & 767 & 40\\
+2005 & 17,344 & 11,637 & 27,296 & 3,914 & 374 & 56 & 4,886 & 196\\
+2006 & 17,613 & 14,583 & 31,575 & 3,967 & 286 & 76 & 5,485 & 1,005\\
+2007 & 27,109 & 13,428 & 45,747 & 6,626 & 45 & 120 & 2,563 & 222\\
+2008 & 19,397 & 11,890 & 30,174 & 4,072 & 90 & 15 & 4,127 & 570\\
+\addlinespace
+2009 & 18,647 & 18,720 & 34,944 & 6,400 & 37 & 144 & 4,249 & 147\\
+2010 & 18,212 & 14,498 & 26,838 & 5,468 & 101 & 7 & 4,923 & 102\\
+2011 & 18,300 & 14,208 & 25,225 & 4,427 & 260 & 3 & 6,747 & 665\\
+2012 & 20,090 & 18,729 & 47,805 & 10,408 & 1,058 & 27 & 8,770 & 618\\
+2013 & 23,725 & 14,708 & 48,850 & 11,731 & 376 & 268 & 11,443 & 50\\
+\addlinespace
+2014 & 12,114 & 11,023 & 34,199 & 7,643 & 337 & 631 & 15,112 & 238\\
+2015 & 12,814 & 6,891 & 40,904 & 6,595 & 388 & 308 & 8,126 & 2,018\\
+2016 & 12,089 & 13,414 & 28,079 & 8,416 & 79 & 43 & 3,521 & 381\\
+2017 & 12,122 & 8,312 & 24,886 & 8,947 & 10 & 50 & 3,312 & 128\\
+2018 & 8,560 & 5,910 & 22,609 & 6,453 & 18 & 76 & 4,558 & 214\\
+\addlinespace
+2019 & 18,932 & 17,470 & 32,975 & 7,215 & 777 & 331 & 17,080 & 3,804\\
+\rowcolor{cyan}  \textbf{Mean 76-19} & \textbf{17,859} & \textbf{12,575} & \textbf{19,571} & \textbf{2,858} & \textbf{143} & \textbf{59} & \textbf{2,793} & \textbf{278}\\
+\bottomrule
+\multicolumn{9}{l}{\textit{Note: }}\\
+\multicolumn{9}{l}{2018: 66 Lakes (32\%) not surveyed.}\\
+\end{tabular}
+\end{table}
+
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
+\begin{table}
+
+\caption{\label{tab:Kable_Table3_output}Summary of geese counted in the additional survey areas, 2010-2019.}
+\centering
+\begin{tabular}[t]{lrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{Adults} & \multicolumn{4}{c}{Goslings} \\
+\cmidrule(l{3pt}r{3pt}){2-5} \cmidrule(l{3pt}r{3pt}){6-9}
+YEAR & BLBR & CACG & GWFG & SNGO & BLBR & CACG & GWFG & SNGO\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{9}{l}{\textbf{Atigaru Point}}\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2010 & 696 & 58 & 400 & 10 & 0 & 0 & 14 & 0\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2019 & 450 & 105 & 677 & 0 & 10 & 0 & 237 & 0\\
+\addlinespace[0.3em]
+\multicolumn{9}{l}{\textbf{Colville River Delta}}\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2010 & 439 & 6 & 2,076 & 463 & 82 & 0 & 707 & 248\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2015 & 475 & 76 & 2,545 & 1,567 & 150 & 4 & 1,045 & 1,189\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2019 & 968 & 107 & 2,360 & 5,710 & 347 & 23 & 506 & 4,486\\
+\addlinespace[0.3em]
+\multicolumn{9}{l}{\textbf{Kogru River}}\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2010 & 247 & 0 & 147 & 25 & 0 & 0 & 14 & 0\\
+\addlinespace[0.3em]
+\multicolumn{9}{l}{\textbf{Piasuk River Delta}}\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2010 & 5,131 & 12 & 217 & 2,873 & 10 & 0 & 189 & 8\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2011 & 2,705 & 12 & 17 & 1,336 & 0 & 5 & 0 & 509\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2012 & 3,733 & 0 & 245 & 3,348 & 0 & 0 & 8 & 259\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2013 & 7,742 & 60 & 792 & 7,405 & 0 & 15 & 291 & 234\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2014 & 3,560 & 43 & 705 & 3,383 & 10 & 0 & 663 & 90\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2015 & 1,047 & 55 & 626 & 2,387 & 40 & 5 & 320 & 1,688\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2016 & 4,317 & 34 & 532 & 3,364 & 0 & 0 & 204 & 114\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2017 & 1,681 & 10 & 372 & 2,599 & 27 & 0 & 186 & 67\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2019 & 1,084 & 222 & 1,340 & 5,047 & 0 & 0 & 638 & 2,220\\
+\addlinespace[0.3em]
+\multicolumn{9}{l}{\textbf{Cape Simpson}}\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2010 & 5,402 & 1,024 & 1,552 & 294 & 128 & 0 & 716 & 8\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2011 & 5,095 & 732 & 2,115 & 863 & 30 & 10 & 663 & 303\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2012 & 7,336 & 1,207 & 2,786 & 664 & 71 & 38 & 1,024 & 77\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2013 & 8,194 & 444 & 3,631 & 1,440 & 0 & 5 & 596 & 54\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2014 & 6,796 & 370 & 5,568 & 1,646 & 206 & 0 & 2,244 & 14\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2015 & 1,218 & 47 & 5,830 & 2,173 & 0 & 0 & 1,698 & 1,497\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2016 & 5,033 & 2,079 & 3,559 & 1,821 & 16 & 11 & 1,363 & 355\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2017 & 3,509 & 772 & 3,391 & 2,028 & 10 & 0 & 547 & 21\\
+\hspace{1em}\hspace{1em}\hspace{1em}\hspace{1em}2019 & 8,887 & 1,226 & 7,228 & 3,809 & 121 & 40 & 4,984 & 1,957\\
+\bottomrule
+\end{tabular}
+\end{table}
+%This is the back page of report
+\clearpage%this makes the page break for the last page/floats issue
+\thispagestyle{empty}
+\noindent Division of Migratory Bird Management-Alaska Region\\
+1011 East Tudor Rd. MS 201\\
+Anchorage, AK 99503\\
+\vspace{0.25in}
+
+\noindent U.S.~Fish \& Wildlife Service\\
+\textcolor{blue}{http://www.fws.gov}\\
+\vspace{0.25in}
+
+\begin{figure}
+	\begin{flushleft}
+		% Import small B&W DOI logo
+		% DOI is 103x103 pixels
+		\includegraphics[height=52px, keepaspectratio]{doiemblem.jpg}
+		% Import small B&W FWS logo
+		% Scale FWS logo to be
+		\includegraphics[height=52px, keepaspectratio]{fws.png}
+	\end{flushleft}
+\end{figure}
+\vspace{0.25in}
+\end{document}
